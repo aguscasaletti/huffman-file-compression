@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.ues21.aed2.modelo;
 
 import java.io.EOFException;
@@ -11,35 +6,37 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.BitSet;
 
-
 /**
  *
- * @author agustin
+ * @author Agustín Aliaga
  */
 public class ArbolHuffman {
 
+    // Lista que contiene inicialmente en cada Nodo los caracteres de entrada y su frecuencia,
+    // y (luego de que el arbol se construye) finalmente pasa a contener el NodoHuffman raíz.
     private ListaHuffman listaArbolHuffman = new ListaHuffman();
+
+    // Lista que contiene en cada nodo un String array, donde el primer item es el símbolo de entrada y el segundo
+    // es el código de Huffman correspondiente.
     private ListaHuffman listaCodHuffman = new ListaHuffman();
 
-    public void crearArbol(String texto) {
+    public void crearArbol(final String texto) {
         char[] vectTexto = texto.toCharArray();
-        char c;
-        NodoHuffman nodo;
-        for (int i = 0; i < vectTexto.length; i++) {
-            c = vectTexto[i];
-            nodo = new NodoHuffman(Character.toString(c), 1, null, null);
-            getListaArbolHuffman().agregarOrdenado(nodo);
+
+        for (char c : vectTexto) {
+            NodoHuffman nodo = new NodoHuffman(Character.toString(c), 1, null, null);
+            listaArbolHuffman.agregarOrdenado(nodo);
         }
 
         int pos1, pos2, frec = 0;
         Nodo p1, p2;
         NodoHuffman izq = null, der = null;
-        int tam = getListaArbolHuffman().getSize();
+        int tam = listaArbolHuffman.getSize();
         while (tam > 1) {
             pos1 = 1;
             pos2 = 2;
-            p1 = getListaArbolHuffman().get(pos1);
-            p2 = getListaArbolHuffman().get(pos2);
+            p1 = listaArbolHuffman.get(pos1);
+            p2 = listaArbolHuffman.get(pos2);
 
             if (p1 != null) {
                 izq = (NodoHuffman) p1.getInfo();
@@ -51,10 +48,10 @@ public class ArbolHuffman {
             }
 
             NodoHuffman nodo1 = new NodoHuffman(null, frec, izq, der);
-            getListaArbolHuffman().agregar(nodo1);
-            getListaArbolHuffman().borrarPrimero();
-            getListaArbolHuffman().borrarPrimero();
-            tam = getListaArbolHuffman().getSize();
+            listaArbolHuffman.agregar(nodo1);
+            listaArbolHuffman.borrarPrimero();
+            listaArbolHuffman.borrarPrimero();
+            tam = listaArbolHuffman.getSize();
         }
 
         if (this.listaArbolHuffman.getFrente() != null) {
@@ -87,7 +84,7 @@ public class ArbolHuffman {
             //el formato de archivo requerido en el final. En este caso se considera
             //que el archivo original se denomina PRUEBCOM.txt
             try {
-                RandomAccessFile rda = new RandomAccessFile("/home/agustin/Escritorio/pruebaHuffman.u21", "rw");
+                RandomAccessFile rda = new RandomAccessFile("./pruebaHuffman.u21", "rw");
                 rda.writeChar('h');
                 rda.writeChar('u');
                 rda.writeChar('f');
@@ -106,17 +103,14 @@ public class ArbolHuffman {
                 rda.write(vectByte, 0, vectByte.length);
 
                 rda.close();
-
-            } catch (FileNotFoundException ex) {
-                System.err.println(ex);
-            } catch (IOException ex) {
-                System.err.println(ex);
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
 
             //Yapa: Lectura de huffman en archivo de acceso aleatorio siguiendo
             //el formato de archivo requerido en el final.
             try {
-                RandomAccessFile rda = new RandomAccessFile("/home/agustin/Escritorio/pruebaHuffman.u21", "r");
+                RandomAccessFile rda = new RandomAccessFile("./pruebaHuffman.u21", "r");
                 //El identificador del archivo es: huf
                 StringBuilder sbId = new StringBuilder();
                 for (int i = 0; i < 3; i++) {
@@ -166,10 +160,8 @@ public class ArbolHuffman {
                     System.out.println(sbTiraBit.toString()); 
                 }
 
-            } catch (FileNotFoundException ex) {
-                System.err.println(ex);
-            } catch (IOException ex) {
-                System.err.println(ex);
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
         }
 
@@ -201,34 +193,5 @@ public class ArbolHuffman {
             }
         }
         return sbCod.toString();
-    }
-
-
-    /**
-     * @return the listaArbolHuffman
-     */
-    public ListaHuffman getListaArbolHuffman() {
-        return listaArbolHuffman;
-    }
-
-    /**
-     * @param listaArbolHuffman the listaArbolHuffman to set
-     */
-    public void setListaArbolHuffman(ListaHuffman listaArbolHuffman) {
-        this.listaArbolHuffman = listaArbolHuffman;
-    }
-
-    /**
-     * @return the listaCodHuffman
-     */
-    public ListaHuffman getListaCodHuffman() {
-        return listaCodHuffman;
-    }
-
-    /**
-     * @param listaCodHuffman the listaCodHuffman to set
-     */
-    public void setListaCodHuffman(ListaHuffman listaCodHuffman) {
-        this.listaCodHuffman = listaCodHuffman;
     }
 }

@@ -10,7 +10,7 @@ import org.ues21.aed2.modelo.ArbolHuffman;
 
 /**
  *
- * @author agustin
+ * @author Agustín Aliaga
  */
 public class Main {
 

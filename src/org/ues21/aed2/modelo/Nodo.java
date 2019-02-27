@@ -7,7 +7,7 @@ package org.ues21.aed2.modelo;
 
 /**
  *
- * @author agustin
+ * @author Agustín Aliaga
  * @param <T>
  */
 public class Nodo<T> {
@@ -20,36 +20,19 @@ public class Nodo<T> {
         this.siguiente = siguiente;
     }
 
-    
-    /**
-     * @return the info
-     */
     public T getInfo() {
         return info;
     }
 
-    /**
-     * @param info the info to set
-     */
     public void setInfo(T info) {
         this.info = info;
     }
 
-    /**
-     * @return the siguiente
-     */
     public Nodo getSiguiente() {
         return siguiente;
     }
 
-    /**
-     * @param siguiente the siguiente to set
-     */
     public void setSiguiente(Nodo siguiente) {
         this.siguiente = siguiente;
     }
-    
-    
-    
-    
 }

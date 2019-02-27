@@ -9,7 +9,7 @@ import org.ues21.aed2.soporte.ExcepcionNoEncontrado;
 
 /**
  *
- * @author agustin
+ * @author Agustín Aliaga
  */
 public class ListaHuffman {
 
@@ -22,7 +22,7 @@ public class ListaHuffman {
      * @param <T>
      * @param info El valor del nodo a ser insertado
      */
-    public <T> void agregarOrdenado(T info) {
+    public <T> void agregarOrdenado(final T info) {
         Nodo p = this.getFrente();
         Nodo q = null;
         boolean band = false;
@@ -211,7 +211,7 @@ public class ListaHuffman {
             q = p;
             p = p.getSiguiente();
         }
-        throw new ExcepcionNoEncontrado("Nodo no encontrado!!");
+        throw new ExcepcionNoEncontrado();
     }
 
 
