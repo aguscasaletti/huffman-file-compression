@@ -9,10 +9,10 @@ package org.ues21.aed2.soporte;
  *
  * @author Agustín Aliaga
  */
-public class ExcepcionNoEncontrado extends Exception{
+public class ExcepcionNoEncontrado extends Exception {
 
     public ExcepcionNoEncontrado() {
-        super("\"Nodo no encontrado!!\"");
+        super("Nodo no encontrado!!");
     }
     
 }

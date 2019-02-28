@@ -23,44 +23,65 @@ public class ListaHuffman {
      * @param info El valor del nodo a ser insertado
      */
     public <T> void agregarOrdenado(final T info) {
-        Nodo p = this.getFrente();
-        Nodo q = null;
-        boolean band = false;
-        NodoHuffman nodo;
-        Nodo nvo = new Nodo(info, null);
-        if (p == null) {
-            this.setFrente(nvo);
+        Nodo actual = this.getFrente();
+        Nodo anterior = null;
+        boolean found = false;
+        Nodo nuevo = new Nodo(info, null);
+
+        // Empty list
+        if (actual == null) {
+            this.setFrente(nuevo);
             this.setSize(this.getSize() + 1);
-        } else {
-            while (p != null) {
-                nodo = (NodoHuffman) p.getInfo();
-                if (((NodoHuffman) info).getFrec() <= nodo.getFrec()) {
-                    if (nodo.getCaracter().equals(((NodoHuffman) info).getCaracter())) {
-                        band = true;
-                        nodo.setFrec(nodo.getFrec() + 1);
-                        break;
-                    }
-                } else {
-                    break;
-                }
-                q = p;
-                p = p.getSiguiente();
-            }
-
-            if (q != null && !band) {
-                if (p == null) {
-                    q.setSiguiente(nvo);
-                } else {
-                    //if (((NodoHuffman) info).getFrec() < nodo.getFrec()) {
-                    q.setSiguiente(nvo);
-                    nvo.setSiguiente(p);
-                    //}
-                }
-                this.setSize(this.getSize() + 1);
-            }
-
+            return;
         }
 
+        Nodo insert = null;
+
+        while (actual != null) {
+            if (((NodoHuffman) info).getCaracter() != null &&
+                    ((NodoHuffman) info).getCaracter().equals(((NodoHuffman) actual.getInfo()).getCaracter())) {
+                found = true;
+                ((NodoHuffman) actual.getInfo()).setFrec(((NodoHuffman) actual.getInfo()).getFrec() + 1);
+                while (actual.getSiguiente() != null &&
+                        ((NodoHuffman) actual.getInfo()).getFrec()
+                                > ((NodoHuffman)actual.getSiguiente().getInfo()).getFrec()) {
+                    Nodo aux = actual.getSiguiente();
+                    if (anterior != null) {
+                        anterior.setSiguiente(aux);
+                    } else {
+                        // Es el primer nodo
+                        this.frente = aux;
+                    }
+                    actual.setSiguiente(aux.getSiguiente());
+                    aux.setSiguiente(actual);
+                    anterior = aux;
+                }
+                break;
+            }
+
+            if (((NodoHuffman) actual.getInfo()).getFrec() < ((NodoHuffman) info).getFrec()) {
+                insert = actual;
+            }
+
+
+
+            anterior = actual;
+            actual = actual.getSiguiente();
+        }
+
+        if (!found) {
+            if (insert == null) {
+                // Es el primer Nodo a insertar
+                nuevo.setSiguiente(this.frente);
+                this.frente = nuevo;
+            } else {
+                Nodo aux = insert.getSiguiente();
+                insert.setSiguiente(nuevo);
+                nuevo.setSiguiente(aux);
+            }
+
+            this.setSize(this.getSize() + 1);
+        }
     }
 
     /**
@@ -84,9 +105,8 @@ public class ListaHuffman {
             this.setFrente(nvo);
         }
         this.setSize(this.getSize() + 1);
-
     }
-    
+
     public <T>T get(int pos) {
         Nodo p = this.getFrente();
         int i = 1;
@@ -99,8 +119,8 @@ public class ListaHuffman {
         }
         return null;
     }
-   
-    
+
+
     public <T>T borrarPrimero() {
         if (this.getFrente() != null) {
             Nodo p = this.getFrente();
@@ -108,7 +128,7 @@ public class ListaHuffman {
             this.setFrente(this.getFrente().getSiguiente());
             p.setSiguiente(null);
             p = null;
-            
+
             this.size--;
             return y;
         } else {
@@ -154,7 +174,7 @@ public class ListaHuffman {
             }
         }
     }
-    
+
     public Nodo buscar(String caracter) {
         Nodo p = this.getFrente();
         while (p != null) {
@@ -167,6 +187,17 @@ public class ListaHuffman {
         return p;
     }
 
+    public Nodo buscarCaracter(String codigo) {
+        Nodo p = this.getFrente();
+        while (p != null) {
+            String[] vec = (String[]) p.getInfo();
+            if (codigo.equals(vec[1])) {
+                return p;
+            }
+            p = p.getSiguiente();
+        }
+        return p;
+    }
 
     /**
      * Método que permite buscar un nodo e insertar uno nuevo si el nodo buscado
