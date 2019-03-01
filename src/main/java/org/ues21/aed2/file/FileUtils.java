@@ -22,11 +22,6 @@ public class FileUtils {
            path = "comprimido.u21";
         }
 
-        String[] segments = path.split("/");
-
-        //El código generado como una cadena de caracteres.
-        System.out.println("Código huffman generado como cadena de caracteres: ");
-        System.out.println(contenido);
         BitSet bitset = new BitSet(contenido.length());
 
         char[] codVec = contenido.toCharArray();
@@ -49,6 +44,7 @@ public class FileUtils {
         //que el archivo original se denomina PRUEBCOM.txt
         try {
             RandomAccessFile rda = new RandomAccessFile(path, "rw");
+
             rda.writeChar('h');
             rda.writeChar('u');
             rda.writeChar('f');
@@ -63,27 +59,35 @@ public class FileUtils {
             rda.writeChar('C');
             rda.writeChar('O');
             rda.writeChar('M');
-            rda.writeInt(vectByte.length);
+            rda.writeInt(contenido.length());
             rda.write(vectByte, 0, vectByte.length);
+
+            // Escribir tamaño de diccionario (para evitar leer los bits de padding)
+            rda.writeInt(diccionario.getSize());
 
             // Escribir diccionario
             Nodo p = diccionario.getFrente();
             while (p != null) {
                 rda.writeChar(((String[])p.getInfo())[0].charAt(0));
+
                 String code = ((String[])p.getInfo())[1];
                 rda.writeInt(code.length());
 
-                BitSet bitSet = new BitSet(code.length());
+                BitSet codeBitset = new BitSet(code.length());
                 for (int i = 0; i < code.length(); i++) {
                     if (code.charAt(i) == '1') {
-                        bitSet.set(i);
+                        codeBitset.set(i);
                     }
                 }
-                if (bitSet.toByteArray().length == 0) {
-                    rda.write(new byte[1]);
-                } else {
-                    rda.write(bitSet.toByteArray(), 0, bitSet.toByteArray().length);
+
+                // Create the required amount of bytes. When BitSet doesn't contain zeros in a byte it won't return it
+                // for the "toByteArray()" call. That's why we do it this way.
+                byte[] codeBytes = new byte[(int) Math.ceil((double)code.length() / 8.0)];
+                for (int i = 0; i < codeBitset.toByteArray().length; i++) {
+                    codeBytes[i] = codeBitset.toByteArray()[i];
                 }
+
+                rda.write(codeBytes, 0, codeBytes.length);
 
                 p = p.getSiguiente();
             }
@@ -92,6 +96,7 @@ public class FileUtils {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+
     }
 
     public static void escribir(String path, String contenido) {
@@ -103,10 +108,10 @@ public class FileUtils {
     }
 
     public static U21File leerU21(String path) {
-        StringBuilder sbId = new StringBuilder();
-        StringBuilder sbExt = new StringBuilder();
-        StringBuilder sbNombre = new StringBuilder();
-        StringBuilder sbTiraBit = new StringBuilder();
+        StringBuilder sbId = new StringBuilder(),
+         sbExt = new StringBuilder(),
+         sbNombre = new StringBuilder(),
+         sbTiraBit = new StringBuilder();
         ListaHuffman diccionario = new ListaHuffman();
 
         try {
@@ -128,13 +133,10 @@ public class FileUtils {
 
             int largoBits = rda.readInt();
 
-            byte b;
-
-            for (int i = 0; i < largoBits; i++) {
-                b = rda.readByte();
+            for (int i = 0; i < Math.ceil((double)largoBits / 8.0); i++) {
+                byte b = rda.readByte();
                 BitSet bitset1 = new BitSet(8);
-                //Tener en cuenta que si los ultimos Bits del código no llegan
-                //a 8 se completan con ceros
+
                 for (int j = 0; j < 8; j++) {
                     if ((b & (1 << j)) > 0) {
                         bitset1.set(j);
@@ -147,46 +149,53 @@ public class FileUtils {
                     } else {
                         sbTiraBit.append("0");
                     }
+
+                    if (sbTiraBit.length() == largoBits) {
+                        break;
+                    }
                 }
             }
 
-            try {
-                while (true) {
-                    char c = rda.readChar();
-                    int bitsLength = rda.readInt();
+            int largoDiccionario = rda.readInt();
 
-                    double bytesAmount = Math.ceil((double) bitsLength / 8.0);
-                    StringBuilder sbCode = new StringBuilder();
+            for (int i = 0; i < largoDiccionario; i++) {
+                char c = rda.readChar();
+                int bitsLength = rda.readInt();
 
-                    for (int i = 0; i < bytesAmount; i++) {
-                        b = rda.readByte();
-                        BitSet bitset1 = new BitSet(8);
-                        for (int j = 0; j < 8; j++) {
-                            if ((b & (1 << j)) > 0) {
-                                bitset1.set(j);
-                            }
-                        }
+                double bytesAmount = Math.ceil((double) bitsLength / 8.0);
+                StringBuilder sbCode = new StringBuilder();
 
-                        for (int j = 0; j < 8; j++) {
-                            if (bitset1.get(j)) {
-                                sbCode.append("1");
-                            } else {
-                                sbCode.append("0");
-                            }
-
-                            if (sbCode.toString().length() == bitsLength) {
-                                break;
-                            }
+                for (int j = 0; j < bytesAmount; j++) {
+                    byte b = rda.readByte();
+//                    try {
+//                        b = rda.readByte();
+//                    } catch(EOFException ex) {
+//                        ex.printStackTrace();
+//                    }
+                    BitSet bitset1 = new BitSet(8);
+                    for (int k = 0; k < 8; k++) {
+                        if ((b & (1 << k)) > 0) {
+                            bitset1.set(k);
                         }
                     }
 
-                    String[] vec = new String[2];
-                    vec[0] = String.valueOf(c);
-                    vec[1] = sbCode.toString();
-                    diccionario.agregar(vec);
+                    for (int k = 0; k < 8; k++) {
+                        if (bitset1.get(k)) {
+                            sbCode.append("1");
+                        } else {
+                            sbCode.append("0");
+                        }
+
+                        if (sbCode.toString().length() == bitsLength) {
+                            break;
+                        }
+                    }
                 }
-            } catch (EOFException e) {
-                rda.close();
+
+                String[] vec = new String[2];
+                vec[0] = String.valueOf(c);
+                vec[1] = sbCode.toString();
+                diccionario.agregar(vec);
             }
 
             rda.close();
@@ -207,10 +216,7 @@ public class FileUtils {
         StringBuilder sb = new StringBuilder();
 
         try {
-            Files.lines(
-                    Paths.get(path),
-                    StandardCharsets.UTF_8
-            ).forEach(sb::append);
+            Files.lines(Paths.get(path), StandardCharsets.UTF_8).forEach(sb::append);
         } catch (IOException e) {
             e.printStackTrace();
         }

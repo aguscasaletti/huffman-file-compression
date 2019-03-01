@@ -30,4 +30,20 @@ public class U21File {
     public ListaHuffman getDiccionario() {
         return diccionario;
     }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public void setExtension(String extension) {
+        this.extension = extension;
+    }
+
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
+    }
+
+    public void setDiccionario(ListaHuffman diccionario) {
+        this.diccionario = diccionario;
+    }
 }

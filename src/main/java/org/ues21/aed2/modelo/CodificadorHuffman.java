@@ -3,9 +3,6 @@ package org.ues21.aed2.modelo;
 import org.ues21.aed2.modelo.NodoHuffman;
 import org.ues21.aed2.soporte.U21File;
 
-import java.io.EOFException;
-import java.io.RandomAccessFile;
-import java.util.BitSet;
 
 public class CodificadorHuffman {
 
@@ -26,7 +23,6 @@ public class CodificadorHuffman {
 
     public static String decodificar(final U21File archivo) {
         char[] vectTexto = archivo.getCodigo().toCharArray();
-        char c;
         StringBuilder sbMensaje = new StringBuilder();
         StringBuilder sbBusqueda = new StringBuilder();
 

@@ -60,13 +60,6 @@ public class NodoHuffman implements Comparable<NodoHuffman> {
         this.der = der;
     }
 
-    /*
-    @Override
-    public int hashCode() {
-        int hash = 3;
-        return hash;
-    }*/
-
     @Override
     public boolean equals(Object obj) {
         return obj != null &&

@@ -52,7 +52,6 @@ public class ArbolHuffman {
 
         if (this.listaArbolHuffman.getFrente() != null) {
             NodoHuffman p = (NodoHuffman) this.listaArbolHuffman.getFrente().getInfo();
-            StringBuilder sbCod = new StringBuilder();
             crearDiccionario(p, this.diccionarioHuffman, "");
         }
     }

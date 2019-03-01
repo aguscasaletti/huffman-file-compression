@@ -28,7 +28,6 @@ public class ListaHuffman {
         boolean found = false;
         Nodo nuevo = new Nodo(info, null);
 
-        // Empty list
         if (actual == null) {
             this.setFrente(nuevo);
             this.setSize(this.getSize() + 1);
