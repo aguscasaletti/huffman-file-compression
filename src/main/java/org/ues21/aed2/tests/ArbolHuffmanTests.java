@@ -29,7 +29,7 @@ public class ArbolHuffmanTests {
             "When packing signed bytes into an int, each byte needs to be masked off because it is sign-extended to 32 bits (rather than zero-extended) due to the arithmetic promotion rule (described in JLS, Conversions and Promotions). There's an interesting puzzle related to this described in Java Puzzlers (\"A Big Delight in Every Byte\") by Joshua Bloch and Neal Gafter . When comparing a byte value to an int value, the byte is sign-extended to an int and then this value is compared to the other int\n",
             "PATH://src/test/input/prueba.txt",
             "PATH://src/test/input/shakespeare.txt",
-            "PATH://src/test/input/prueba2.txt"
+            "PATH://src/test/input/big.txt"
     };
 
     @Test

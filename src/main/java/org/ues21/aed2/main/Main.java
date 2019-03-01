@@ -20,7 +20,7 @@ public class Main {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
         if (args.length < 2) {
             System.out.println("Se debe proporcionar al menos un modo y un archivo de origen");
@@ -32,8 +32,7 @@ public class Main {
             destino = args.length > 2 ? args[2] : "";
 
         if (!mode.equals("-c") && !mode.equals("-d")) {
-            System.out.println("Seleccione un modo válido (-c o -d)");
-            return;
+            throw new Exception("Seleccione un modo válido (-c o -d)");
         }
 
         if (mode.equals("-c")) {
@@ -46,5 +45,6 @@ public class Main {
             String mensajeOriginal = CodificadorHuffman.decodificar(archivo);
             FileUtils.escribir(destino, mensajeOriginal);
         }
+
     }
 }
