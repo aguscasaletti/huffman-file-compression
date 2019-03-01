@@ -6,42 +6,85 @@ import org.ues21.aed2.modelo.NodoHuffman;
 import org.ues21.aed2.soporte.U21File;
 import sun.jvm.hotspot.utilities.Bits;
 
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.BitSet;
 import java.util.List;
+import java.util.Scanner;
+import java.util.stream.Stream;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class FileUtils {
+
+
+    public static String leer(String path) {
+        StringBuilder sb = new StringBuilder();
+
+        try {
+            File file = new File(path);
+            Scanner sc = new Scanner(file);
+
+            while (sc.hasNextLine()) {
+                String nextLine = sc.nextLine();
+                sb.append(nextLine + "\n");
+            }
+
+//            String[] lines = Files.lines(Paths.get(path), UTF_8).toArray(String[]::new);
+//            for (int i = 0; i < lines.length; i++) {
+//                sb.append(lines[i]);
+//                if (i == lines.length - 1) {
+//                    System.out.println("");
+//                }
+//                if (i != lines.length - 1) {
+//                    sb.append("\n");
+//                }
+//            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return sb.toString();
+    }
+
+    public static void escribir(String path, String contenido) {
+        try {
+            Files.write(Paths.get(path), contenido.getBytes(UTF_8));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static byte[] getBytesToWrite(String bits) {
+        BitSet bitSet = new BitSet(bits.length());
+        for (int i = 0; i < bits.length(); i++) {
+            if (bits.charAt(i) == '1') {
+                bitSet.set(i);
+            }
+        }
+
+        // Create the required amount of bytes. When BitSet doesn't contain zeros in a byte it won't return it
+        // for the "toByteArray()" call. That's why we do it this way.
+        byte[] codeBytes = new byte[(int) Math.ceil((double)bits.length() / 8.0)];
+        byte[] bitSetByteArray = bitSet.toByteArray();
+
+        for (int i = 0; i < bitSetByteArray.length; i++) {
+            codeBytes[i] = bitSetByteArray[i];
+        }
+
+        return codeBytes;
+    }
 
     public static void escribirU21(String path, String contenido, ListaHuffman diccionario) {
         if (path == null || path.isEmpty()) {
            path = "comprimido.u21";
         }
 
-        BitSet bitset = new BitSet(contenido.length());
+        byte[] vectByte = getBytesToWrite(contenido);
 
-        char[] codVec = contenido.toCharArray();
-
-        //Para pasar el codigo de bits en string a un bitset y
-        //poder manejar bytes directamente
-        for (int i = 0; i < codVec.length; i++) {
-            char d = codVec[i];
-            if (d == '1') {
-                bitset.set(i);
-            }
-        }
-
-        //Estos bytes son los que debo almacenar en el archivo
-        //de acceso aleatorio
-        byte[] vectByte = bitset.toByteArray();
-
-        //Yapa: Escritura de huffman en archivo de acceso aleatorio siguiendo
-        //el formato de archivo requerido en el final. En este caso se considera
-        //que el archivo original se denomina PRUEBCOM.txt
         try {
             RandomAccessFile rda = new RandomAccessFile(path, "rw");
 
@@ -73,19 +116,7 @@ public class FileUtils {
                 String code = ((String[])p.getInfo())[1];
                 rda.writeInt(code.length());
 
-                BitSet codeBitset = new BitSet(code.length());
-                for (int i = 0; i < code.length(); i++) {
-                    if (code.charAt(i) == '1') {
-                        codeBitset.set(i);
-                    }
-                }
-
-                // Create the required amount of bytes. When BitSet doesn't contain zeros in a byte it won't return it
-                // for the "toByteArray()" call. That's why we do it this way.
-                byte[] codeBytes = new byte[(int) Math.ceil((double)code.length() / 8.0)];
-                for (int i = 0; i < codeBitset.toByteArray().length; i++) {
-                    codeBytes[i] = codeBitset.toByteArray()[i];
-                }
+                byte[] codeBytes = getBytesToWrite(code);
 
                 rda.write(codeBytes, 0, codeBytes.length);
 
@@ -95,15 +126,6 @@ public class FileUtils {
             rda.close();
         } catch (Exception ex) {
             ex.printStackTrace();
-        }
-
-    }
-
-    public static void escribir(String path, String contenido) {
-        try {
-            Files.write(Paths.get(path), contenido.getBytes());
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -167,11 +189,6 @@ public class FileUtils {
 
                 for (int j = 0; j < bytesAmount; j++) {
                     byte b = rda.readByte();
-//                    try {
-//                        b = rda.readByte();
-//                    } catch(EOFException ex) {
-//                        ex.printStackTrace();
-//                    }
                     BitSet bitset1 = new BitSet(8);
                     for (int k = 0; k < 8; k++) {
                         if ((b & (1 << k)) > 0) {
@@ -210,17 +227,5 @@ public class FileUtils {
                 sbTiraBit.toString(),
                 diccionario
         );
-    }
-
-    public static String leer(String path) {
-        StringBuilder sb = new StringBuilder();
-
-        try {
-            Files.lines(Paths.get(path), StandardCharsets.UTF_8).forEach(sb::append);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return sb.toString();
     }
 }

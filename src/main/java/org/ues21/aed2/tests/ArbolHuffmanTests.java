@@ -10,6 +10,8 @@ import org.ues21.aed2.modelo.ListaHuffman;
 import org.ues21.aed2.modelo.Nodo;
 import org.ues21.aed2.soporte.U21File;
 
+import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -20,13 +22,14 @@ import static org.junit.Assert.*;
 public class ArbolHuffmanTests {
 
     private String[] inputTestSet = {
-            "Se debe proporcionar al menos un modo y un archivo de origen",
-            "Hola como estás!!! :D !",
-            "LSDKFLAKDFL DFGldskfgs dflgklds gKLDFKHLDFGk KHLDKGHOrk$%·L$K %$&",
-            "!=!=!=!=!!!===DSdfsoe·/$%&/%&/(%&/(!=!=!=!=!!!===DSdfsoe·%&$%%&&&&&/%&///%?????",
-            "adsf 67509)))))))))))43945)·$)%))))))" +
-                    "%·$%·$%· V # 34345",
-            "When packing signed bytes into an int, each byte needs to be masked off because it is sign-extended to 32 bits (rather than zero-extended) due to the arithmetic promotion rule (described in JLS, Conversions and Promotions). There's an interesting puzzle related to this described in Java Puzzlers (\"A Big Delight in Every Byte\") by Joshua Bloch and Neal Gafter . When comparing a byte value to an int value, the byte is sign-extended to an int and then this value is compared to the other int"
+            "Se debe proporcionar al menos un modo y un archivo de origen \n",
+            "Hola como estás!!! :D !\n",
+            "LSDKFLAKDFL DFGldskfgs dflgklds gKLDFKHLDFGk KHLDKGHOrk$%·L$K %$&\n",
+            "!=!=!=!=!!!===DSdfsoe·/$%&/%&/(%&/(!=!=!=!=!!!===DSdfsoe·%&$%%&&&&&/%&///%?????\n",
+            "When packing signed bytes into an int, each byte needs to be masked off because it is sign-extended to 32 bits (rather than zero-extended) due to the arithmetic promotion rule (described in JLS, Conversions and Promotions). There's an interesting puzzle related to this described in Java Puzzlers (\"A Big Delight in Every Byte\") by Joshua Bloch and Neal Gafter . When comparing a byte value to an int value, the byte is sign-extended to an int and then this value is compared to the other int\n",
+            "PATH://src/test/input/prueba.txt",
+            "PATH://src/test/input/shakespeare.txt",
+            "PATH://src/test/input/prueba2.txt"
     };
 
     @Test
@@ -93,9 +96,19 @@ public class ArbolHuffmanTests {
 
     @Test
     public void testSerialization() {
+        File[] testDirFiles = new File("src/test/generated").listFiles();
+        if (testDirFiles != null) {
+            // Delete all generated files if any
+            Arrays.stream(testDirFiles).forEach(File::delete);
+        }
+
         final int[] count = { 0 };
         Stream.of(inputTestSet).forEach(input -> {
-            String testFileName = "testFile.u21" + count[0];
+            String testFileName = "src/test/generated/file.u21-" + count[0];
+
+            if (input.startsWith("PATH://")) {
+                input = FileUtils.leer(input.replace("PATH://", ""));
+            }
 
             // Serialize
             ArbolHuffman arbol = new ArbolHuffman(input);
@@ -123,9 +136,12 @@ public class ArbolHuffmanTests {
             assertEquals(codigo, archivo.getCodigo());
 
             String mensajeOriginal = CodificadorHuffman.decodificar(archivo);
-            FileUtils.escribir(count[0] + "testMessage.txt", mensajeOriginal);
+            assertEquals(input, mensajeOriginal);
 
-            String mensajeGuardado = FileUtils.leer(count[0] + "testMessage.txt");
+            // Fix line breaks
+            FileUtils.escribir("src/test/generated/" + count[0] + "-testMessage.txt", mensajeOriginal);
+
+            String mensajeGuardado = FileUtils.leer("src/test/generated/" + count[0] + "-testMessage.txt");
             // Messages should be equal
             assertEquals(input, mensajeGuardado);
 
