@@ -21,6 +21,10 @@ import static org.junit.Assert.*;
 @RunWith(JUnit4.class)
 public class ArbolHuffmanTests {
 
+    public static String TEST_DIR = "src/test";
+    public static String INPUT_DIR = TEST_DIR + "/input/";
+    public static String OUTPUT_DIR = TEST_DIR + "/generated/";
+
     private String[] inputTestSet = {
             "Se debe proporcionar al menos un modo y un archivo de origen \n",
             "Hola como estás!!! :D !\n",
@@ -96,7 +100,13 @@ public class ArbolHuffmanTests {
 
     @Test
     public void testSerialization() {
-        File[] testDirFiles = new File("src/test/generated").listFiles();
+        File outputDir = new File(OUTPUT_DIR);
+        if (!outputDir.exists()) {
+            outputDir.mkdir();
+        }
+
+        File[] testDirFiles = outputDir.listFiles();
+
         if (testDirFiles != null) {
             // Delete all generated files if any
             Arrays.stream(testDirFiles).forEach(File::delete);
@@ -104,7 +114,7 @@ public class ArbolHuffmanTests {
 
         final int[] count = { 0 };
         Stream.of(inputTestSet).forEach(input -> {
-            String testFileName = "src/test/generated/file.u21-" + count[0];
+            String testFileName = OUTPUT_DIR + "/file.u21-" + count[0];
 
             if (input.startsWith("PATH://")) {
                 input = FileUtils.leer(input.replace("PATH://", ""));
@@ -139,9 +149,9 @@ public class ArbolHuffmanTests {
             assertEquals(input, mensajeOriginal);
 
             // Fix line breaks
-            FileUtils.escribir("src/test/generated/" + count[0] + "-testMessage.txt", mensajeOriginal);
+            FileUtils.escribir(OUTPUT_DIR + count[0] + "-testMessage.txt", mensajeOriginal);
 
-            String mensajeGuardado = FileUtils.leer("src/test/generated/" + count[0] + "-testMessage.txt");
+            String mensajeGuardado = FileUtils.leer(OUTPUT_DIR + count[0] + "-testMessage.txt");
             // Messages should be equal
             assertEquals(input, mensajeGuardado);
 
