@@ -1,3 +1,0 @@
-Manifest-Version: 1.0
-Main-Class: org.ues21.aed2.main.Main
-
