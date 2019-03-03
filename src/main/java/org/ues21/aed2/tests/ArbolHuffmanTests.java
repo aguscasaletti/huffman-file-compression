@@ -114,7 +114,7 @@ public class ArbolHuffmanTests {
 
         final int[] count = { 0 };
         Stream.of(inputTestSet).forEach(input -> {
-            String testFileName = OUTPUT_DIR + "/file.u21-" + count[0];
+            String testFileName = OUTPUT_DIR + "/" + count[0] + "file.u21";
 
             if (input.startsWith("PATH://")) {
                 input = FileUtils.leer(input.replace("PATH://", ""));
