@@ -51,7 +51,7 @@ export default class Home extends Component {
 			if (files.length) {
 				this.setState({
 					processing: true,
-					inputPath: e.dataTransfer.files[0].path,
+					inputPath: path.normalize(e.dataTransfer.files[0].path).replace(/ /g, '\\ '),
 				}, () => this.startProcessing());
 			} else {
 				this.setState({
@@ -75,18 +75,17 @@ export default class Home extends Component {
 		const { location } = this.props;
 		const { mode } = queryString.parse(location.search);
 
-		
-		// TODO no funciona con espacios en los directorios..
 		const inputPathArray = inputPath.split(path.sep);
 		const newFileName = `${inputPathArray[inputPathArray.length - 1].split('.')[0]}.${mode === 'compress' ? 'u21' : 'txt'}`;
-		const outputPath = `${inputPathArray.slice(0, inputPathArray.length - 1).join(path.sep)}/${newFileName}`;
+		const outputPath = path.normalize(`${inputPathArray.slice(0, inputPathArray.length - 1).join(path.sep)}/${newFileName}`).replace(/ /g, '\\ ');
 
-		const command = `
-			java -jar resources/jar/TAED2-FinalProject.jar ${mode === 'compress' ? '-c' : '-d'} ${inputPath} ${outputPath}`;
+		const filePath = process.env.NODE_ENV === 'development' ? path.normalize('app/jar/TAED2-FinalProject.jar') : path.normalize(`${process.resourcesPath}/../app/jar/TAED2-FinalProject.jar`).replace(/ /g, '\\ ');
+		const command = `java -jar ${filePath} ${mode === 'compress' ? '-c' : '-d'} ${inputPath} ${outputPath}`;
 
 		exec(
 			command,
-			(err) => {
+			(err, stdout, stderr) => {
+				console.log(stdout, stderr)
 				if (err) {
 					console.error(err)
 					this.setState({
@@ -126,7 +125,6 @@ export default class Home extends Component {
 
 		const outputPathSplitted = outputPath.split(path.sep);
 		const outputDir = outputPathSplitted.slice(0, outputPathSplitted.length - 1).join(path.sep);
-		console.log(outputDir);
 		shell.openItem(outputDir);
 	}
 
@@ -144,7 +142,7 @@ export default class Home extends Component {
 		}, (filePaths) => {
 			this.setState({
 				processing: true,
-				inputPath: filePaths[0],
+				inputPath: path.normalize(filePaths[0]).replace(/ /g, '\\ '),
 			}, () => this.startProcessing());
 		})
 	}

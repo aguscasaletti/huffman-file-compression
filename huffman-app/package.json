@@ -24,7 +24,6 @@
     "postinstall": "yarn flow-typed && electron-builder install-app-deps package.json && yarn build-dll && opencollective-postinstall",
     "postlint-fix": "prettier --ignore-path .eslintignore --single-quote --write '**/*.{*{js,jsx,json},babelrc,eslintrc,prettierrc,stylelintrc}'",
     "postlint-styles-fix": "prettier --ignore-path .eslintignore --single-quote --write '**/*.{css,scss}'",
-    "precommit": "lint-staged",
     "prestart": "yarn build",
     "start": "cross-env NODE_ENV=production electron ./app/main.prod.js",
     "start-main-dev": "cross-env HOT=1 NODE_ENV=development electron -r @babel/register ./app/main.dev.js",
@@ -34,7 +33,7 @@
     "test-e2e": "node -r @babel/register ./internals/scripts/CheckBuiltsExist.js && cross-env NODE_ENV=test testcafe electron:./ ./test/e2e/HomePage.e2e.js",
     "test-e2e-live": "node -r @babel/register ./internals/scripts/CheckBuiltsExist.js && cross-env NODE_ENV=test testcafe-live electron:./ ./test/e2e/HomePage.e2e.js",
     "test-watch": "yarn test --watch",
-    "copy-jar": "cp ../out/artifacts/TAED2_FinalProject_jar/TAED2-FinalProject.jar resources/jar/"
+    "copy-jar": "cp ../out/artifacts/TAED2_FinalProject_jar/TAED2-FinalProject.jar app/jar/"
   },
   "lint-staged": {
     "*.{js,jsx}": [
@@ -66,6 +65,9 @@
       "app/main.prod.js",
       "app/main.prod.js.map",
       "package.json"
+    ],
+    "extraFiles": [
+      "app/jar/TAED2-FinalProject.jar"
     ],
     "dmg": {
       "contents": [

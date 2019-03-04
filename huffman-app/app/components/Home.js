@@ -10,6 +10,11 @@ export default class Home extends Component {
     this.isJavaInstalled()
       .then(Function.prototype)
       .catch(() => alert('Necesitás instalar Java para correr este programa'));
+
+    // const prodPath = path.resolve(`${process.resourcesPath}/../bin/${executableBin}`);
+
+    // console.log(process.resourcesPath);
+    console.log(process)
   }
 
   goToPage = (mode) => {
