@@ -1,9 +1,10 @@
 package org.ues21.aed2.vista;
 
-import org.ues21.aed2.file.FileUtils;
-import org.ues21.aed2.modelo.ArbolHuffman;
-import org.ues21.aed2.modelo.CodificadorHuffman;
-import org.ues21.aed2.soporte.U21File;
+import org.ues21.aed2.soporte.FileUtils;
+import org.ues21.aed2.estructuras.arbol.ArbolHuffman;
+import org.ues21.aed2.soporte.CodificadorHuffman;
+import org.ues21.aed2.soporte.ArchivoU21;
+import org.ues21.aed2.soporte.ProgressListener;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -137,8 +138,8 @@ public class View extends JFrame implements PropertyChangeListener {
 
                 if (this.compress) {
                     this.startIndeterminate();
-                    String codigo = CodificadorHuffman.codificar(arbolHuffman.getDiccionarioHuffman(), arbolHuffman.getTexto());
-                    FileUtils.escribirU21(file.getAbsolutePath() + "/testAgus.u21", codigo, arbolHuffman.getDiccionarioHuffman());
+                    String codigo = CodificadorHuffman.codificar(arbolHuffman.getListaSimbolos(), arbolHuffman.getTexto());
+                    FileUtils.escribirU21(file.getAbsolutePath() + "/testAgus.u21", codigo, arbolHuffman.getListaSimbolos());
                     this.stopIndeterminate();
                 } else {
                     this.startIndeterminate();
@@ -244,8 +245,8 @@ public class View extends JFrame implements PropertyChangeListener {
 
         @Override
         protected String doInBackground() {
-            U21File archivoU21 = FileUtils.leerU21(this.inputPath);
-            String mensajeOriginal = CodificadorHuffman.decodificar(archivoU21, new ArbolHuffman.ProgressListener() {
+            ArchivoU21 archivoU21 = FileUtils.leerU21(this.inputPath);
+            String mensajeOriginal = CodificadorHuffman.decodificar(archivoU21, new ProgressListener() {
                 @Override
                 public void onProgressUpdate(long progress) {
                     if (progress == -98) {
@@ -257,10 +258,6 @@ public class View extends JFrame implements PropertyChangeListener {
                 @Override
                 public void onComplete() {
                     setProgress(100);
-                }
-
-                @Override
-                public void onError() {
                 }
             });
 
@@ -278,9 +275,7 @@ public class View extends JFrame implements PropertyChangeListener {
         @Override
         protected ArbolHuffman doInBackground() {
             String content = FileUtils.leer(this.filePath);
-
-
-            ArbolHuffman arbol = new ArbolHuffman(content, new ArbolHuffman.ProgressListener() {
+            ArbolHuffman arbol = new ArbolHuffman(content, new ProgressListener() {
                 @Override
                 public void onProgressUpdate(long progress) {
                     try {
@@ -296,9 +291,6 @@ public class View extends JFrame implements PropertyChangeListener {
                     setProgress(100);
                 }
 
-                @Override
-                public void onError() {
-                }
             });
 
             return arbol;

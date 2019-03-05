@@ -3,12 +3,12 @@ package org.ues21.aed2.tests;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.ues21.aed2.file.FileUtils;
-import org.ues21.aed2.modelo.ArbolHuffman;
-import org.ues21.aed2.modelo.CodificadorHuffman;
-import org.ues21.aed2.modelo.ListaHuffman;
-import org.ues21.aed2.modelo.Nodo;
-import org.ues21.aed2.soporte.U21File;
+import org.ues21.aed2.soporte.FileUtils;
+import org.ues21.aed2.estructuras.arbol.ArbolHuffman;
+import org.ues21.aed2.soporte.CodificadorHuffman;
+import org.ues21.aed2.estructuras.lista.ListaHuffman;
+import org.ues21.aed2.estructuras.lista.Nodo;
+import org.ues21.aed2.soporte.ArchivoU21;
 
 import java.io.File;
 import java.util.Arrays;
@@ -47,11 +47,11 @@ public class ArbolHuffmanTests {
                 inputCharsMap.put(String.valueOf(symbol), true);
             }
 
-            assertEquals(arbolHuffman.getDiccionarioHuffman().getSize(), inputCharsMap.size());
+            assertEquals(arbolHuffman.getListaSimbolos().getSize(), inputCharsMap.size());
 
             for (Map.Entry<String, Boolean> entry : inputCharsMap.entrySet())
             {
-                assertNotNull(arbolHuffman.getDiccionarioHuffman().buscar(entry.getKey()));
+                assertNotNull(arbolHuffman.getListaSimbolos().buscar(entry.getKey()));
                 assertNotEquals(entry.getValue(), null);
                 assertNotEquals(entry.getValue(), "");
                 assertNotEquals(entry.getKey(), null);
@@ -65,7 +65,7 @@ public class ArbolHuffmanTests {
         Stream.of(inputTestSet).forEach(input -> {
 
             ArbolHuffman arbolHuffman = new ArbolHuffman(input);
-            String result = CodificadorHuffman.codificar(arbolHuffman.getDiccionarioHuffman(), input);
+            String result = CodificadorHuffman.codificar(arbolHuffman.getListaSimbolos(), input);
             assertTrue(
                     result.replace("0", "")
                             .replace("1", "")
@@ -79,17 +79,17 @@ public class ArbolHuffmanTests {
         Stream.of(inputTestSet).forEach(input -> {
 
             ArbolHuffman arbolHuffman = new ArbolHuffman(input);
-            String result = CodificadorHuffman.codificar(arbolHuffman.getDiccionarioHuffman(), input);
-            U21File file = new U21File("", "", result, arbolHuffman.getDiccionarioHuffman());
+            String result = CodificadorHuffman.codificar(arbolHuffman.getListaSimbolos(), input);
+            ArchivoU21 file = new ArchivoU21("", "", result, arbolHuffman.getListaSimbolos());
             String mensajeOriginal = CodificadorHuffman.decodificar(file);
 
             assertEquals(input, mensajeOriginal);
         });
     }
 
-    private void printDiccionario(ListaHuffman diccionario) {
-        System.out.println(diccionario.getSize() + " ---------------------------------");
-        Nodo p = diccionario.getFrente();
+    private void printListaSimbolos(ListaHuffman listaSimbolos) {
+        System.out.println(listaSimbolos.getSize() + " ---------------------------------");
+        Nodo p = listaSimbolos.getFrente();
         int count = 1;
         while (p != null) {
             System.out.println(count + " - " + ((String[])p.getInfo())[0] + " - " + ((String[])p.getInfo())[1]);
@@ -114,25 +114,38 @@ public class ArbolHuffmanTests {
 
         final int[] count = { 0 };
         Stream.of(inputTestSet).forEach(input -> {
+            System.out.println("Profiling: " + count);
+
             String testFileName = OUTPUT_DIR + "/" + count[0] + "file.u21";
 
             if (input.startsWith("PATH://")) {
+                long startReadfile = System.currentTimeMillis();
                 input = FileUtils.leer(input.replace("PATH://", ""));
+                System.out.println(String.format("Time (s) to read file: %s", (System.currentTimeMillis() - startReadfile) / 1000F));
             }
 
-            // Serialize
+            long startCreateTree = System.currentTimeMillis();
             ArbolHuffman arbol = new ArbolHuffman(input);
-            String codigo = CodificadorHuffman.codificar(arbol.getDiccionarioHuffman(), input);
-            FileUtils.escribirU21(testFileName, codigo, arbol.getDiccionarioHuffman());
+            System.out.println(String.format("Time (s) to create tree: %s", (System.currentTimeMillis() - startCreateTree) / 1000F));
+
+            long startEncoding = System.currentTimeMillis();
+            String codigo = CodificadorHuffman.codificar(arbol.getListaSimbolos(), input);
+            System.out.println(String.format("Time (s) to encode: %s", (System.currentTimeMillis() - startEncoding) / 1000F));
+
+            long startWrite21 = System.currentTimeMillis();
+            FileUtils.escribirU21(testFileName, codigo, arbol.getListaSimbolos());
+            System.out.println(String.format("Time (s) to write U21: %s", (System.currentTimeMillis() - startWrite21) / 1000F));
 
             // Deserialize
-            U21File archivo = FileUtils.leerU21(testFileName);
+            long startReading21 = System.currentTimeMillis();
+            ArchivoU21 archivo = FileUtils.leerU21(testFileName);
+            System.out.println(String.format("Time (s) to read U21: %s", (System.currentTimeMillis() - startReading21) / 1000F));
 
             // Compare dictionaries
-            Nodo frente = arbol.getDiccionarioHuffman().getFrente();
-            Nodo deserialized = archivo.getDiccionario().getFrente();
+            Nodo frente = arbol.getListaSimbolos().getFrente();
+            Nodo deserialized = archivo.getTablaSimbolos().getFrente();
 
-            assertEquals(arbol.getDiccionarioHuffman().getSize(), archivo.getDiccionario().getSize());
+            assertEquals(arbol.getListaSimbolos().getSize(), archivo.getTablaSimbolos().getSize());
 
             while (frente != null) {
                 assertEquals(((String[])frente.getInfo())[0], ((String[])deserialized.getInfo())[0]);
@@ -145,7 +158,10 @@ public class ArbolHuffmanTests {
             // Compare codes
             assertEquals(codigo, archivo.getCodigo());
 
+            long startDecoding = System.currentTimeMillis();
             String mensajeOriginal = CodificadorHuffman.decodificar(archivo);
+            System.out.println(String.format("Time (s) to decode message: %s", (System.currentTimeMillis() - startDecoding) / 1000F));
+
             assertEquals(input, mensajeOriginal);
 
             // Fix line breaks

@@ -5,10 +5,10 @@
  */
 package org.ues21.aed2.main;
 
-import org.ues21.aed2.file.FileUtils;
-import org.ues21.aed2.modelo.ArbolHuffman;
-import org.ues21.aed2.modelo.CodificadorHuffman;
-import org.ues21.aed2.soporte.U21File;
+import org.ues21.aed2.soporte.FileUtils;
+import org.ues21.aed2.estructuras.arbol.ArbolHuffman;
+import org.ues21.aed2.soporte.CodificadorHuffman;
+import org.ues21.aed2.soporte.ArchivoU21;
 
 
 /**
@@ -38,10 +38,10 @@ public class Main {
         if (mode.equals("-c")) {
             String content = FileUtils.leer(origen);
             ArbolHuffman arbol = new ArbolHuffman(content);
-            String codigo = CodificadorHuffman.codificar(arbol.getDiccionarioHuffman(), content);
-            FileUtils.escribirU21(destino, codigo, arbol.getDiccionarioHuffman());
+            String codigo = CodificadorHuffman.codificar(arbol.getListaSimbolos(), content);
+            FileUtils.escribirU21(destino, codigo, arbol.getListaSimbolos());
         } else {
-            U21File archivo = FileUtils.leerU21(origen);
+            ArchivoU21 archivo = FileUtils.leerU21(origen);
             String mensajeOriginal = CodificadorHuffman.decodificar(archivo);
             FileUtils.escribir(destino, mensajeOriginal);
         }
