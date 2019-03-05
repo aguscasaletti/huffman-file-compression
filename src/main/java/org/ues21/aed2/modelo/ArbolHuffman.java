@@ -14,8 +14,23 @@ public class ArbolHuffman {
     // es el código de CodificadorHuffman correspondiente.
     private ListaHuffman diccionarioHuffman = new ListaHuffman();
 
+    private ProgressListener progressListener;
+
+    private String texto;
+
     public ArbolHuffman(final String texto) {
+        this.texto = texto;
         this.construirArbolHuffman(texto);
+    }
+
+    public ArbolHuffman(final String texto, ProgressListener listener){
+        this.progressListener = listener;
+        this.texto = texto;
+        this.construirArbolHuffman(texto);
+    }
+
+    public String getTexto() {
+        return texto;
     }
 
     private void construirArbolHuffman(final String texto) {
@@ -28,11 +43,18 @@ public class ArbolHuffman {
         Nodo p1, p2;
         NodoHuffman izq = null, der = null;
         int tam = listaArbolHuffman.getSize();
+        int total = listaArbolHuffman.getSize();
+
         while (tam > 1) {
             pos1 = 1;
             pos2 = 2;
             p1 = listaArbolHuffman.get(pos1);
             p2 = listaArbolHuffman.get(pos2);
+
+            if (this.progressListener != null) {
+                int progress = (total - tam) * 100 / total;
+                this.progressListener.onProgressUpdate(progress);
+            }
 
             if (p1 != null) {
                 izq = (NodoHuffman) p1.getInfo();
@@ -48,11 +70,17 @@ public class ArbolHuffman {
             listaArbolHuffman.borrarPrimero();
             listaArbolHuffman.borrarPrimero();
             tam = listaArbolHuffman.getSize();
+
+
         }
 
         if (this.listaArbolHuffman.getFrente() != null) {
             NodoHuffman p = (NodoHuffman) this.listaArbolHuffman.getFrente().getInfo();
             crearDiccionario(p, this.diccionarioHuffman, "");
+        }
+
+        if (this.progressListener != null) {
+            this.progressListener.onComplete();
         }
     }
 
@@ -78,5 +106,13 @@ public class ArbolHuffman {
 
     public ListaHuffman getDiccionarioHuffman() {
         return diccionarioHuffman;
+    }
+
+    public interface ProgressListener {
+        void onProgressUpdate(long progress);
+
+        void onComplete();
+
+        void onError();
     }
 }

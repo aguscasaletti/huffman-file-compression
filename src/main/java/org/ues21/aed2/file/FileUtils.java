@@ -32,17 +32,6 @@ public class FileUtils {
                 String nextLine = sc.nextLine();
                 sb.append(nextLine + "\n");
             }
-
-//            String[] lines = Files.lines(Paths.get(path), UTF_8).toArray(String[]::new);
-//            for (int i = 0; i < lines.length; i++) {
-//                sb.append(lines[i]);
-//                if (i == lines.length - 1) {
-//                    System.out.println("");
-//                }
-//                if (i != lines.length - 1) {
-//                    sb.append("\n");
-//                }
-//            }
         } catch (IOException e) {
             e.printStackTrace();
         }

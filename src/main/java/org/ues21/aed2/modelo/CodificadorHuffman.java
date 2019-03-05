@@ -21,13 +21,16 @@ public class CodificadorHuffman {
         return sbCod.toString();
     }
 
-    public static String decodificar(final U21File archivo) {
+    public static String decodificar(final U21File archivo, final ArbolHuffman.ProgressListener progressListener) {
         char[] vectTexto = archivo.getCodigo().toCharArray();
         StringBuilder sbMensaje = new StringBuilder();
         StringBuilder sbBusqueda = new StringBuilder();
 
-        for (int i = 0; i < vectTexto.length; i++) {
-            sbBusqueda.append(vectTexto[i]);
+        for (long i = 0; i < vectTexto.length; i++) {
+            if (progressListener != null && i > 100 && i % 100 == 0) {
+                progressListener.onProgressUpdate(i * 100 / vectTexto.length);
+            }
+            sbBusqueda.append(vectTexto[(int) i]);
             Nodo nodo = archivo.getDiccionario().buscarCaracter(sbBusqueda.toString());
             if (nodo != null) {
                 String[] vec = (String[]) nodo.getInfo();
@@ -35,6 +38,14 @@ public class CodificadorHuffman {
                 sbBusqueda = new StringBuilder();
             }
         }
+
+        if (progressListener != null) {
+            progressListener.onComplete();
+        }
         return sbMensaje.toString();
+    }
+
+    public static String decodificar(final U21File archivo) {
+        return CodificadorHuffman.decodificar(archivo, null);
     }
 }
