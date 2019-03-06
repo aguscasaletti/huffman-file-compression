@@ -63,8 +63,6 @@ public class ListaHuffman {
                 insert = actual;
             }
 
-
-
             anterior = actual;
             actual = actual.getSiguiente();
         }

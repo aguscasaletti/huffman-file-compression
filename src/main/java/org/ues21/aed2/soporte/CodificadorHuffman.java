@@ -34,7 +34,7 @@ public class CodificadorHuffman {
             if (nodo != null) {
                 String[] vec = (String[]) nodo.getInfo();
                 sbMensaje.append(vec[0]);
-                sbBusqueda = new StringBuilder();
+                sbBusqueda.setLength(0);
             }
         }
 

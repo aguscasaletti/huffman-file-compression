@@ -114,7 +114,7 @@ public class ArbolHuffmanTests {
 
         final int[] count = { 0 };
         Stream.of(inputTestSet).forEach(input -> {
-            System.out.println("Profiling: " + count);
+            System.out.println("Profiling: " + count[0]);
 
             String testFileName = OUTPUT_DIR + "/" + count[0] + "file.u21";
 
@@ -131,6 +131,8 @@ public class ArbolHuffmanTests {
             long startEncoding = System.currentTimeMillis();
             String codigo = CodificadorHuffman.codificar(arbol.getListaSimbolos(), input);
             System.out.println(String.format("Time (s) to encode: %s", (System.currentTimeMillis() - startEncoding) / 1000F));
+
+            System.out.println("Cantidad de símbolos diferentes: " + arbol.getListaSimbolos().getSize());
 
             long startWrite21 = System.currentTimeMillis();
             FileUtils.escribirU21(testFileName, codigo, arbol.getListaSimbolos());
