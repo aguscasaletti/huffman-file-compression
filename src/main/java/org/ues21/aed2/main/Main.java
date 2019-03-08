@@ -5,10 +5,10 @@
  */
 package org.ues21.aed2.main;
 
-import org.ues21.aed2.soporte.FileUtils;
+import org.ues21.aed2.soporte.first.FileUtils;
 import org.ues21.aed2.estructuras.arbol.ArbolHuffman;
-import org.ues21.aed2.soporte.CodificadorHuffman;
-import org.ues21.aed2.soporte.ArchivoU21;
+import org.ues21.aed2.soporte.first.CodificadorHuffman;
+import org.ues21.aed2.soporte.first.ArchivoU21;
 
 
 /**

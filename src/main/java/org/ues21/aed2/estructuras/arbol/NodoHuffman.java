@@ -60,6 +60,10 @@ public class NodoHuffman implements Comparable<NodoHuffman> {
         this.der = der;
     }
 
+    public boolean esHoja() {
+        return this.der == null && this.izq == null;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return obj != null &&
