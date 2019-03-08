@@ -5,7 +5,7 @@
  */
 package org.ues21.aed2.estructuras.lista;
 
-import org.ues21.aed2.estructuras.arbol.NodoHuffman;
+import org.ues21.aed2.estructuras.arbol.huffman.NodoHuffman;
 import org.ues21.aed2.soporte.ExcepcionNoEncontrado;
 
 /**

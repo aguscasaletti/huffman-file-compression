@@ -1,14 +1,9 @@
 package org.ues21.aed2.vista;
 
-import org.ues21.aed2.soporte.first.FileUtils;
-import org.ues21.aed2.estructuras.arbol.ArbolHuffman;
-import org.ues21.aed2.soporte.first.CodificadorHuffman;
-import org.ues21.aed2.soporte.first.ArchivoU21;
-import org.ues21.aed2.soporte.ProgressListener;
-import org.ues21.aed2.soporte.third.ArbolHuffmanThird;
-import org.ues21.aed2.soporte.third.ArchivoU21Third;
-import org.ues21.aed2.soporte.third.CodificadorHuffmanThird;
-import org.ues21.aed2.soporte.third.FileUtilsThird;
+import org.ues21.aed2.estructuras.arbol.huffman.ArbolHuffman;
+import org.ues21.aed2.soporte.ArchivoU21;
+import org.ues21.aed2.soporte.CodificadorHuffman;
+import org.ues21.aed2.soporte.FileUtils;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -31,7 +26,7 @@ public class View extends JFrame implements PropertyChangeListener {
 
     private boolean compress = true;
 
-    private ArbolHuffmanThird arbolHuffman;
+    private ArbolHuffman arbolHuffman;
     private String mensajeOriginal;
 
     private void visibilityInit() {
@@ -142,12 +137,12 @@ public class View extends JFrame implements PropertyChangeListener {
 
                 if (this.compress) {
                     this.startIndeterminate();
-                    String codigo = CodificadorHuffmanThird.codificar(arbolHuffman.getListaSimbolos(), arbolHuffman.getTexto());
-                    FileUtilsThird.escribirU21(file.getAbsolutePath() + "/testAgus.u21", codigo, arbolHuffman.getListaSimbolos());
+                    String codigo = CodificadorHuffman.codificar(arbolHuffman.getListaSimbolos(), arbolHuffman.getTexto());
+                    FileUtils.escribirU21(file.getAbsolutePath() + "/testAgus.u21", codigo, arbolHuffman.getListaSimbolos());
                     this.stopIndeterminate();
                 } else {
                     this.startIndeterminate();
-                    FileUtilsThird.escribir(saveFile.getSelectedFile().getAbsolutePath() + "/kalsdkasda.txt", this.mensajeOriginal);
+                    FileUtils.escribir(saveFile.getSelectedFile().getAbsolutePath() + "/kalsdkasda.txt", this.mensajeOriginal);
                     this.stopIndeterminate();
                 }
 
@@ -216,7 +211,7 @@ public class View extends JFrame implements PropertyChangeListener {
                 case DONE:
                     if (this.compress) {
                         try {
-                            arbolHuffman = (ArbolHuffmanThird) this.comprimirWorker.get();
+                            arbolHuffman = (ArbolHuffman) this.comprimirWorker.get();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         } catch (ExecutionException e) {
@@ -249,8 +244,8 @@ public class View extends JFrame implements PropertyChangeListener {
 
         @Override
         protected String doInBackground() {
-            ArchivoU21Third archivoU21 = FileUtilsThird.leerU21(this.inputPath);
-            String mensajeOriginal = CodificadorHuffmanThird.decodificar(archivoU21, new ProgressListener() {
+            ArchivoU21 archivoU21 = FileUtils.leerU21(this.inputPath);
+            String mensajeOriginal = CodificadorHuffman.decodificar(archivoU21, new ProgressListener() {
                 @Override
                 public void onProgressUpdate(long progress) {
                     if (progress == -98) {
@@ -269,7 +264,7 @@ public class View extends JFrame implements PropertyChangeListener {
         }
     }
 
-    public class ComprimirWorker extends SwingWorker<Object, ArbolHuffman> {
+    public class ComprimirWorker extends SwingWorker<Object, org.ues21.aed2.estructuras.arbol.huffman.ArbolHuffman> {
         private String filePath;
 
         public ComprimirWorker(String filePath) {
@@ -277,9 +272,9 @@ public class View extends JFrame implements PropertyChangeListener {
         }
 
         @Override
-        protected ArbolHuffman doInBackground() {
+        protected org.ues21.aed2.estructuras.arbol.huffman.ArbolHuffman doInBackground() {
             String content = FileUtils.leer(this.filePath);
-            ArbolHuffman arbol = new ArbolHuffman(content, new ProgressListener() {
+            org.ues21.aed2.estructuras.arbol.huffman.ArbolHuffman arbol = new org.ues21.aed2.estructuras.arbol.huffman.ArbolHuffman(content, new ProgressListener() {
                 @Override
                 public void onProgressUpdate(long progress) {
                     try {
