@@ -3,6 +3,7 @@ package org.ues21.aed2.estructuras.lista;
 public class Lista {
 
     private Nodo frente;
+    private int size;
 
     public Lista(Nodo frente) {
         this.frente = frente;
@@ -24,6 +25,7 @@ public class Lista {
         }
 
         aux.setSiguiente(nodo);
+        size ++;
     }
 
     public Nodo getFrente() {

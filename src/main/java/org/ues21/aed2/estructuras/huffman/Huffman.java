@@ -1,57 +1,56 @@
-package org.ues21.aed2.estructuras.arbol.huffman;
+package org.ues21.aed2.estructuras.huffman;
 
-import org.ues21.aed2.estructuras.arbol.huffman.NodoHuffman;
-import org.ues21.aed2.estructuras.arbol.map.CharMap;
 import org.ues21.aed2.estructuras.lista.ListaHuffman;
 import org.ues21.aed2.estructuras.lista.Nodo;
+import org.ues21.aed2.estructuras.map.ItemTablaSimbolos;
+import org.ues21.aed2.estructuras.map.TablaHashSimbolos;
 import org.ues21.aed2.vista.ProgressListener;
 
 /**
  *
  * @author Agustín Aliaga
  */
-public class ArbolHuffman {
+public class Huffman {
 
     private ListaHuffman listaArbolHuffman = new ListaHuffman();
 
-    private CharMap listaSimbolos = new CharMap();
+//    private CharMap listaSimbolos = new CharMap();
+    private TablaHashSimbolos listaSimbolos = new TablaHashSimbolos();
 
     private ProgressListener progressListener;
 
     private String texto;
 
-    public ArbolHuffman(final String texto) {
+    public Huffman(final String texto) {
         this.texto = texto;
-        this.construirArbolHuffman(texto);
+        this.construirArbolHuffman();
     }
 
-    public ArbolHuffman(final String texto, ProgressListener listener){
+    public Huffman(final String texto, ProgressListener listener){
         this.progressListener = listener;
         this.texto = texto;
-        this.construirArbolHuffman(texto);
+        this.construirArbolHuffman();
     }
 
     public String getTexto() {
         return texto;
     }
 
-    private void construirArbolHuffman(final String texto) {
-        for (char c : texto.toCharArray()) {
+    private void construirArbolHuffman() {
+        for (char c : this.texto.toCharArray()) {
             NodoHuffman nodo = new NodoHuffman(Character.toString(c), 1, null, null);
             listaArbolHuffman.agregarOrdenado(nodo);
         }
 
-        int pos1, pos2, frec = 0;
+        int frec = 0;
         Nodo p1, p2;
         NodoHuffman izq = null, der = null;
         int tam = listaArbolHuffman.getSize();
         int total = listaArbolHuffman.getSize();
 
         while (tam > 1) {
-            pos1 = 1;
-            pos2 = 2;
-            p1 = listaArbolHuffman.get(pos1);
-            p2 = listaArbolHuffman.get(pos2);
+            p1 = listaArbolHuffman.get(1);
+            p2 = listaArbolHuffman.get(2);
 
             if (this.progressListener != null) {
                 int progress = (total - tam) * 100 / total;
@@ -72,9 +71,13 @@ public class ArbolHuffman {
             listaArbolHuffman.borrarPrimero();
             listaArbolHuffman.borrarPrimero();
             tam = listaArbolHuffman.getSize();
-
-
         }
+//
+//        if (this.listaArbolHuffman.getFrente() != null) {
+//            NodoHuffman p = (NodoHuffman) this.listaArbolHuffman.getFrente().getInfo();
+//            crearTablaSimbolos(p, this.listaSimbolos, "");
+//        }
+
 
         if (this.listaArbolHuffman.getFrente() != null) {
             NodoHuffman p = (NodoHuffman) this.listaArbolHuffman.getFrente().getInfo();
@@ -89,21 +92,35 @@ public class ArbolHuffman {
     /**
      * Método que crea la tabla de los símbolos finales a partir del nodo huffman raíz
      */
-    private void crearTablaSimbolos(NodoHuffman p, CharMap tablaSimbolos, String huffmanCode) {
+//    private void crearTablaSimbolos(NodoHuffman p, CharMap tablaSimbolos, String huffmanCode) {
+//        if (p != null) {
+//            if (p.getIzq() == null && p.getDer() == null) {
+//                tablaSimbolos.insertar(p.getCaracter().charAt(0), huffmanCode);
+//            }
+//            crearTablaSimbolos(p.getIzq(), tablaSimbolos, huffmanCode + "0");
+//            crearTablaSimbolos(p.getDer(), tablaSimbolos, huffmanCode + "1");
+//        }
+//    }
+    private void crearTablaSimbolos(NodoHuffman p, TablaHashSimbolos tablaSimbolos, String huffmanCode) {
         if (p != null) {
             if (p.getIzq() == null && p.getDer() == null) {
-                tablaSimbolos.insertar(p.getCaracter().charAt(0), huffmanCode);
+                tablaSimbolos.insertar(p.getCaracter(), new ItemTablaSimbolos(p.getCaracter().charAt(0), huffmanCode));
             }
             crearTablaSimbolos(p.getIzq(), tablaSimbolos, huffmanCode + "0");
             crearTablaSimbolos(p.getDer(), tablaSimbolos, huffmanCode + "1");
         }
     }
 
+
     public ListaHuffman getListaArbolHuffman() {
         return listaArbolHuffman;
     }
 
-    public CharMap getListaSimbolos() {
+//    public CharMap getListaSimbolos() {
+//        return listaSimbolos;
+//    }
+
+    public TablaHashSimbolos getListaSimbolos() {
         return listaSimbolos;
     }
 }

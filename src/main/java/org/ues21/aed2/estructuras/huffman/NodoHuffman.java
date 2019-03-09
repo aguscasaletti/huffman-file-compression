@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.ues21.aed2.estructuras.arbol.huffman;
+package org.ues21.aed2.estructuras.huffman;
 
 /**
  *

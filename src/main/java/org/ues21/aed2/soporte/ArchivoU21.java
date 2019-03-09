@@ -1,18 +1,18 @@
 package org.ues21.aed2.soporte;
 
-import org.ues21.aed2.estructuras.arbol.avl.AVLTree;
+import org.ues21.aed2.estructuras.map.TablaHashSimbolos;
 
 public class ArchivoU21 {
     private String nombre;
     private String extension;
     private String codigo;
-    private AVLTree avlTree;
+    private TablaHashSimbolos map;
 
-    public ArchivoU21(String nombre, String extension, String codigo, AVLTree avlTree) {
+    public ArchivoU21(String nombre, String extension, String codigo, TablaHashSimbolos map) {
         this.nombre = nombre;
         this.extension = extension;
         this.codigo = codigo;
-        this.avlTree = avlTree;
+        this.map = map;
     }
 
     public String getNombre() {
@@ -27,8 +27,8 @@ public class ArchivoU21 {
         return codigo;
     }
 
-    public AVLTree getTablaSimbolos() {
-        return avlTree;
+    public TablaHashSimbolos getTablaSimbolos() {
+        return map;
     }
 
     public void setNombre(String nombre) {
@@ -43,7 +43,7 @@ public class ArchivoU21 {
         this.codigo = codigo;
     }
 
-    public void setTablaSimbolos(AVLTree arbolHuffman) {
-        this.avlTree = arbolHuffman;
+    public void setTablaSimbolos(TablaHashSimbolos arbolHuffman) {
+        this.map = arbolHuffman;
     }
 }

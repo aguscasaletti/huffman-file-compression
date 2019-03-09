@@ -1,21 +1,21 @@
 package org.ues21.aed2.soporte;
 
-import org.ues21.aed2.estructuras.arbol.avl.BSTNode;
-import org.ues21.aed2.estructuras.arbol.avl.ItemTablaSimbolos;
-import org.ues21.aed2.estructuras.arbol.map.CharMap;
+import org.ues21.aed2.estructuras.map.ItemTablaSimbolos;
+import org.ues21.aed2.estructuras.map.TablaHashSimbolos;
 import org.ues21.aed2.vista.ProgressListener;
 
 public class CodificadorHuffman {
 
-    public static String codificar(final CharMap tablaSimbolos, final String mensaje) {
+//    public static String codificar(final CharMap tablaSimbolos, final String mensaje) {
+    public static String codificar(final TablaHashSimbolos tablaSimbolos, final String mensaje) {
         char[] vectTexto = mensaje.toCharArray();
         char c;
         StringBuilder sbCod = new StringBuilder();
         for (int i = 0; i < vectTexto.length; i++) {
             c = vectTexto[i];
-            String codigo  = tablaSimbolos.get(c);
-            if (codigo != null) {
-                sbCod.append(codigo);
+            ItemTablaSimbolos itemTablaSimbolos = tablaSimbolos.findSimbolo(String.valueOf(c));
+            if (itemTablaSimbolos != null) {
+                sbCod.append(itemTablaSimbolos.getCodigo());
             }
         }
         return sbCod.toString();
@@ -31,9 +31,8 @@ public class CodificadorHuffman {
                 progressListener.onProgressUpdate(i * 100 / vectTexto.length);
             }
             sbBusqueda.append(vectTexto[(int) i]);
-            BSTNode node = archivo.getTablaSimbolos().find(new ItemTablaSimbolos('_', sbBusqueda.toString()));
-            if (node != null) {
-                ItemTablaSimbolos itemTablaSimbolos = (ItemTablaSimbolos) node.getData();
+            ItemTablaSimbolos itemTablaSimbolos = archivo.getTablaSimbolos().findCodigo(sbBusqueda.toString());
+            if (itemTablaSimbolos != null) {
                 sbMensaje.append(itemTablaSimbolos.getSimbolo());
                 sbBusqueda.setLength(0);
             }

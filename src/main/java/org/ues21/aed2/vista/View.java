@@ -1,6 +1,6 @@
 package org.ues21.aed2.vista;
 
-import org.ues21.aed2.estructuras.arbol.huffman.ArbolHuffman;
+import org.ues21.aed2.estructuras.huffman.Huffman;
 import org.ues21.aed2.soporte.ArchivoU21;
 import org.ues21.aed2.soporte.CodificadorHuffman;
 import org.ues21.aed2.soporte.FileUtils;
@@ -26,7 +26,7 @@ public class View extends JFrame implements PropertyChangeListener {
 
     private boolean compress = true;
 
-    private ArbolHuffman arbolHuffman;
+    private Huffman huffman;
     private String mensajeOriginal;
 
     private void visibilityInit() {
@@ -137,8 +137,8 @@ public class View extends JFrame implements PropertyChangeListener {
 
                 if (this.compress) {
                     this.startIndeterminate();
-                    String codigo = CodificadorHuffman.codificar(arbolHuffman.getListaSimbolos(), arbolHuffman.getTexto());
-                    FileUtils.escribirU21(file.getAbsolutePath() + "/testAgus.u21", codigo, arbolHuffman.getListaSimbolos());
+                    String codigo = CodificadorHuffman.codificar(huffman.getListaSimbolos(), huffman.getTexto());
+                    FileUtils.escribirU21(file.getAbsolutePath() + "/testAgus.u21", codigo, huffman.getListaSimbolos());
                     this.stopIndeterminate();
                 } else {
                     this.startIndeterminate();
@@ -211,7 +211,7 @@ public class View extends JFrame implements PropertyChangeListener {
                 case DONE:
                     if (this.compress) {
                         try {
-                            arbolHuffman = (ArbolHuffman) this.comprimirWorker.get();
+                            huffman = (Huffman) this.comprimirWorker.get();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         } catch (ExecutionException e) {
@@ -264,7 +264,7 @@ public class View extends JFrame implements PropertyChangeListener {
         }
     }
 
-    public class ComprimirWorker extends SwingWorker<Object, org.ues21.aed2.estructuras.arbol.huffman.ArbolHuffman> {
+    public class ComprimirWorker extends SwingWorker<Object, Huffman> {
         private String filePath;
 
         public ComprimirWorker(String filePath) {
@@ -272,9 +272,9 @@ public class View extends JFrame implements PropertyChangeListener {
         }
 
         @Override
-        protected org.ues21.aed2.estructuras.arbol.huffman.ArbolHuffman doInBackground() {
+        protected Huffman doInBackground() {
             String content = FileUtils.leer(this.filePath);
-            org.ues21.aed2.estructuras.arbol.huffman.ArbolHuffman arbol = new org.ues21.aed2.estructuras.arbol.huffman.ArbolHuffman(content, new ProgressListener() {
+            Huffman arbol = new Huffman(content, new ProgressListener() {
                 @Override
                 public void onProgressUpdate(long progress) {
                     try {

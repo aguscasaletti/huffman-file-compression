@@ -5,8 +5,7 @@
  */
 package org.ues21.aed2.main;
 
-import org.ues21.aed2.estructuras.arbol.huffman.ArbolHuffman;
-import org.ues21.aed2.soporte.ArchivoU21;
+import org.ues21.aed2.estructuras.huffman.Huffman;
 import org.ues21.aed2.soporte.CodificadorHuffman;
 import org.ues21.aed2.soporte.FileUtils;
 
@@ -37,13 +36,13 @@ public class Main {
 
         if (mode.equals("-c")) {
             String content = FileUtils.leer(origen);
-            ArbolHuffman arbol = new ArbolHuffman(content);
+            Huffman arbol = new Huffman(content);
             String codigo = CodificadorHuffman.codificar(arbol.getListaSimbolos(), content);
             FileUtils.escribirU21(destino, codigo, arbol.getListaSimbolos());
         } else {
-            ArchivoU21 archivo = FileUtils.leerU21(origen);
-            String mensajeOriginal = CodificadorHuffman.decodificar(archivo);
-            FileUtils.escribir(destino, mensajeOriginal);
+//            ArchivoU21 archivo = FileUtils.leerU21(origen);
+//            String mensajeOriginal = CodificadorHuffman.decodificar(archivo);
+//            FileUtils.escribir(destino, mensajeOriginal);
         }
 
     }

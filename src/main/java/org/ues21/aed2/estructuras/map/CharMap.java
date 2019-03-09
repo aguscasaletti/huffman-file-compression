@@ -1,4 +1,4 @@
-package org.ues21.aed2.estructuras.arbol.map;
+package org.ues21.aed2.estructuras.map;
 
 public class CharMap {
     private String[] map = new String[256];

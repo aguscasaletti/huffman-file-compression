@@ -1,4 +1,4 @@
-package org.ues21.aed2.estructuras.arbol.avl;
+package org.ues21.aed2.estructuras.map;
 
 public class ItemTablaSimbolos implements Comparable<ItemTablaSimbolos>{
     private char simbolo;
@@ -30,8 +30,4 @@ public class ItemTablaSimbolos implements Comparable<ItemTablaSimbolos>{
         return this.codigo.compareTo(o.codigo);
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return obj.equals(this.codigo);
-    }
 }
