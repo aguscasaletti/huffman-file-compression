@@ -8,23 +8,32 @@ import org.ues21.aed2.vista.ProgressListener;
 /**
  *
  * @author Agustín Aliaga
+ *
+ * Clase que se encarga de la construcción del árbol Huffman
+ *
  */
 public class Huffman {
 
     private ListaHuffman listaArbolHuffman = new ListaHuffman();
 
-//    private CharMap listaSimbolos = new CharMap();
     private TablaHashSimbolos listaSimbolos = new TablaHashSimbolos();
 
     private ProgressListener progressListener;
 
     private String texto;
 
+    /**
+     * @param texto el mensaje inicial (texto a comprimir)
+     */
     public Huffman(final String texto) {
         this.texto = texto;
         this.construirArbolHuffman();
     }
 
+    /**
+     * @param texto el mensaje inicial (texto a comprimir)
+     * @param listener el listener de progreso
+     */
     public Huffman(final String texto, ProgressListener listener){
         this.progressListener = listener;
         this.texto = texto;
@@ -35,7 +44,11 @@ public class Huffman {
         return texto;
     }
 
+    /**
+     * Método que se encarga de construír el árbol de Huffman
+     */
     private void construirArbolHuffman() {
+        // Agregar los caracteres a la lista (y calcular la frecuencia de cada uno)
         for (char c : this.texto.toCharArray()) {
             NodoHuffman nodo = new NodoHuffman(Character.toString(c), 1, null, null);
             listaArbolHuffman.agregarOrdenado(nodo);
@@ -47,10 +60,12 @@ public class Huffman {
         int tam = listaArbolHuffman.getSize();
         int total = listaArbolHuffman.getSize();
 
+        // Construír árbol tomando siempre los dos elementos mas pequeños (menor frecuencia) de forma iterativa.
         while (tam > 1) {
             p1 = listaArbolHuffman.get(1);
             p2 = listaArbolHuffman.get(2);
 
+            // Notificar progreso
             if (this.progressListener != null) {
                 int progress = (total - tam) * 100 / total;
                 this.progressListener.onProgressUpdate(progress);
@@ -71,35 +86,22 @@ public class Huffman {
             listaArbolHuffman.borrarPrimero();
             tam = listaArbolHuffman.getSize();
         }
-//
-//        if (this.listaArbolHuffman.getFrente() != null) {
-//            NodoHuffman p = (NodoHuffman) this.listaArbolHuffman.getFrente().getInfo();
-//            crearTablaSimbolos(p, this.listaSimbolos, "");
-//        }
 
-
+        // Cuando el árbol fue creado, crear ahora la tabla de símbolos
         if (this.listaArbolHuffman.getFrente() != null) {
             NodoHuffman p = (NodoHuffman) this.listaArbolHuffman.getFrente().getInfo();
             crearTablaSimbolos(p, this.listaSimbolos, "");
         }
 
+        // Notificar finalización del progreso
         if (this.progressListener != null) {
             this.progressListener.onComplete();
         }
     }
 
     /**
-     * Método que crea la tabla de los símbolos finales a partir del nodo huffman raíz
+     * Método (recursivo) para crear la tabla de símbolos
      */
-//    private void crearTablaSimbolos(NodoHuffman p, CharMap tablaSimbolos, String huffmanCode) {
-//        if (p != null) {
-//            if (p.getIzq() == null && p.getDer() == null) {
-//                tablaSimbolos.insertar(p.getCaracter().charAt(0), huffmanCode);
-//            }
-//            crearTablaSimbolos(p.getIzq(), tablaSimbolos, huffmanCode + "0");
-//            crearTablaSimbolos(p.getDer(), tablaSimbolos, huffmanCode + "1");
-//        }
-//    }
     private void crearTablaSimbolos(NodoHuffman p, TablaHashSimbolos tablaSimbolos, String huffmanCode) {
         if (p != null) {
             if (p.getIzq() == null && p.getDer() == null) {
@@ -109,15 +111,6 @@ public class Huffman {
             crearTablaSimbolos(p.getDer(), tablaSimbolos, huffmanCode + "1");
         }
     }
-
-
-    public ListaHuffman getListaArbolHuffman() {
-        return listaArbolHuffman;
-    }
-
-//    public CharMap getListaSimbolos() {
-//        return listaSimbolos;
-//    }
 
     public TablaHashSimbolos getListaSimbolos() {
         return listaSimbolos;

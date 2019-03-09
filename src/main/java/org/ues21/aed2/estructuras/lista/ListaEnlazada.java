@@ -1,5 +1,8 @@
 package org.ues21.aed2.estructuras.lista;
 
+/**
+ * Lista enlazada básica
+ */
 public class ListaEnlazada {
 
     private Nodo frente;

@@ -4,8 +4,17 @@ import org.ues21.aed2.estructuras.tablaHash.ItemTablaSimbolos;
 import org.ues21.aed2.estructuras.tablaHash.TablaHashSimbolos;
 import org.ues21.aed2.vista.ProgressListener;
 
+/**
+ * Clase que se encarga de codificar y decodificar un mensaje.
+ */
 public class CodificadorHuffman {
 
+    /**
+     * Codificar un mensaje (obtener la representación en bits de Huffman)
+     * @param tablaSimbolos tabla de símbolos para poder efectuar la traducción
+     * @param mensaje mensaje original que se desea traducir
+     * @return el mensaje codificado
+     */
     public static String codificar(final TablaHashSimbolos tablaSimbolos, final String mensaje) {
         char[] vectTexto = mensaje.toCharArray();
         char c;
@@ -20,6 +29,12 @@ public class CodificadorHuffman {
         return sbCod.toString();
     }
 
+    /**
+     * Decodificar un mensaje (obtener la representación del texto original)
+     * @param archivo representación del archivo leído (código y tabla de símbolos)
+     * @param progressListener interfaz que notifica el avance del proceso
+     * @return el mensaje original
+     */
     public static String decodificar(final ArchivoU21 archivo, final ProgressListener progressListener) {
         char[] vectTexto = archivo.getCodigo().toCharArray();
         StringBuilder sbMensaje = new StringBuilder();

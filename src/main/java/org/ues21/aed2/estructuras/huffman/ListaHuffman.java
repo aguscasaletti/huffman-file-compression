@@ -1,22 +1,29 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.ues21.aed2.estructuras.huffman;
-
-import org.ues21.aed2.estructuras.huffman.NodoHuffman;
 import org.ues21.aed2.estructuras.lista.Nodo;
 
 /**
- *
  * @author Agustín Aliaga
+ *
+ * Clase que implementa una lista simplemente enlazada utilizada para construir el árbol de Huffman.
+ * Para ello usamos esta Lista como una Cola de Prioridad (Priority Queue).
+ *
  */
 public class ListaHuffman {
 
     private Nodo frente = null;
     private int size = 0;
 
+    /**
+     *
+     * Función que agrega un caracter a la lista de manera ordenada. Si se encuentra, se incrementa la frecuencia del mismo.
+     *
+     * Fixes:
+     * - Cuando se encontraba el caracter dentro de la lista y se incrementaba su frecuencia,
+     *  no se acomodaba el nodo de manera tal que quedara ordenada la lista. Como consecuencia de esto,
+     *  el árbol generado no era correcto. Ahora, cuando eso sucede, movemos el nodo hacia adelante hasta ubicarlo
+     *  en su lugar correspondiente.
+     *
+     */
     public <T> void agregarOrdenado(final T info) {
         Nodo actual = this.getFrente();
         Nodo anterior = null;
@@ -25,7 +32,7 @@ public class ListaHuffman {
 
         if (actual == null) {
             this.setFrente(nuevo);
-            this.setSize(this.getSize() + 1);
+            this.size ++;
             return;
         }
 
@@ -72,7 +79,7 @@ public class ListaHuffman {
                 nuevo.setSiguiente(aux);
             }
 
-            this.setSize(this.getSize() + 1);
+            this.size ++;
         }
 
     }

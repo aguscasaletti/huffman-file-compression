@@ -1,14 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.ues21.aed2.estructuras.lista;
 
 /**
  *
+ * Nodo para utilizar en lista enlazada
+ *
  * @author Agustín Aliaga
- * @param <T>
  */
 public class Nodo<T> {
     

@@ -1,5 +1,10 @@
 package org.ues21.aed2.estructuras.tablaHash;
 
+/**
+ * Clase que representa un item en la tabla de símbolos donde:
+ * - simbolo = caracter original
+ * - codigo = código obtenido desde el árbol de Huffman
+ */
 public class ItemTablaSimbolos implements Comparable<ItemTablaSimbolos>{
     private char simbolo;
     private String codigo;

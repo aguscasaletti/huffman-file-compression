@@ -2,6 +2,10 @@ package org.ues21.aed2.soporte;
 
 import org.ues21.aed2.estructuras.tablaHash.TablaHashSimbolos;
 
+/**
+ * Representación de un archivo .u21
+ * Se utiliza al leer el archivo comprimido, para construír un objeto manejable por el programa.
+ */
 public class ArchivoU21 {
     private String nombre;
     private String extension;

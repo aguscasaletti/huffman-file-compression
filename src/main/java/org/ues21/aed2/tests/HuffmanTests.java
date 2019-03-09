@@ -12,22 +12,26 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
 import static org.junit.Assert.*;
 
+/**
+ * Clase de tests
+ */
 @RunWith(JUnit4.class)
 public class HuffmanTests {
 
-    public static String TEST_DIR = "src/test";
-    public static String OUTPUT_DIR = TEST_DIR + "/generated/";
+    private static String TEST_DIR = "src/test";
+    private static String OUTPUT_DIR = TEST_DIR + "/generated/";
 
     private String[] inputTestSet = {
-            "Se debe proporcionar al menos un modo y un archivo de origen \n",
-            "Hola como estás!!! :D !\n",
-            "LSDKFLAKDFL DFGldskfgs dflgklds gKLDFKHLDFGk KHLDKGHOrk$%·L$K %$&\n",
-            "!=!=!=!=!!!===DSdfsoe·/$%&/%&/(%&/(!=!=!=!=!!!===DSdfsoe· ÷¬¢#@|≠´‚¢∞@##¢¢#∞ %&$%%&&&&&/%&///%?????\n",
-            "When packing signed bytes into an int, each byte needs to be masked off because it is sign-extended to 32 bits (rather than zero-extended) due to the arithmetic promotion rule (described in JLS, Conversions and Promotions). There's an interesting puzzle related to this described in Java Puzzlers (\"A Big Delight in Every Byte\") by Joshua Bloch and Neal Gafter . When comparing a byte value to an int value, the byte is sign-extended to an int and then this value is compared to the other int\n",
+//            "Se debe proporcionar al menos un modo y un archivo de origen \n",
+//            "Hola como estás!!! :D !\n",
+//            "LSDKFLAKDFL DFGldskfgs dflgklds gKLDFKHLDFGk KHLDKGHOrk$%·L$K %$&\n",
+//            "!=!=!=!=!!!===DSdfsoe·/$%&/%&/(%&/(!=!=!=!=!!!===DSdfsoe· ÷¬¢#@|≠´‚¢∞@##¢¢#∞ %&$%%&&&&&/%&///%?????\n",
+//            "When packing signed bytes into an int, each byte needs to be masked off because it is sign-extended to 32 bits (rather than zero-extended) due to the arithmetic promotion rule (described in JLS, Conversions and Promotions). There's an interesting puzzle related to this described in Java Puzzlers (\"A Big Delight in Every Byte\") by Joshua Bloch and Neal Gafter . When comparing a byte value to an int value, the byte is sign-extended to an int and then this value is compared to the other int\n",
             "PATH://src/test/input/prueba.txt",
             "PATH://src/test/input/shakespeare.txt",
             "PATH://src/test/input/big.txt",
@@ -76,7 +80,7 @@ public class HuffmanTests {
 
     @Test
     public void testSerialization() {
-        System.out.println("--------------------------------- Imprimiendo resultados  ------------------------------");
+        System.out.println("--------------------------------- Tests  ------------------------------");
 
         File outputDir = new File(OUTPUT_DIR);
         if (!outputDir.exists()) {
@@ -91,53 +95,61 @@ public class HuffmanTests {
         }
 
         final int[] count = { 0 };
-        Stream.of(inputTestSet).forEach(input -> {
-            System.out.println(" ------  Profiling: -----" + input.substring(input.length() - 10, input.length()));
+        Stream.of(inputTestSet).forEach(value -> {
+            System.out.println(" ------  Profiling: -----" + value.substring(value.length() - 10, value.length()));
 
             String testFileName = OUTPUT_DIR + "/" + count[0] + "file.u21";
+            String[] input = { value };
 
-            if (input.startsWith("PATH://")) {
-                long startReadfile = System.currentTimeMillis();
-                input = FileUtils.leer(input.replace("PATH://", ""));
-                System.out.println(String.format("Time (s) to read file: %s", (System.currentTimeMillis() - startReadfile) / 1000F));
+            if (input[0].startsWith("PATH://")) {
+                // Leer archivo original como String
+                Profiler.profileTiming("read file", () -> {
+                    input[0] = FileUtils.leer(input[0].replace("PATH://", ""));
+                });
             }
 
-            long startCreateTree = System.currentTimeMillis();
-            Huffman arbol = new Huffman(input);
-            System.out.println(String.format("Time (s) to create tree: %s", (System.currentTimeMillis() - startCreateTree) / 1000F));
+            // Crear árbol de Huffman y tabla de símbolos
+            AtomicReference<Huffman> arbol = new AtomicReference<>();
+            Profiler.profileTiming("create tree and symbols table", () -> {
+                arbol.set(new Huffman(input[0]));
+            });
 
-            long startEncoding = System.currentTimeMillis();
-            String codigo = CodificadorHuffman.codificar(arbol.getListaSimbolos(), input);
-            System.out.println(String.format("Time (s) to encode: %s", (System.currentTimeMillis() - startEncoding) / 1000F));
+            // Codificar (obtener string final)
+            AtomicReference<String> codigo = new AtomicReference<>();
+            Profiler.profileTiming("encode", () -> {
+                codigo.set(CodificadorHuffman.codificar(arbol.get().getListaSimbolos(), input[0]));
+            });
 
-            System.out.println("Cantidad de símbolos diferentes: " + arbol.getListaSimbolos().getSize());
+            System.out.println("Cantidad de símbolos diferentes: " + arbol.get().getListaSimbolos().getSize());
 
-            long startWrite21 = System.currentTimeMillis();
-            FileUtils.escribirU21(testFileName, codigo, arbol.getListaSimbolos());
-            System.out.println(String.format("Time (s) to write U21: %s", (System.currentTimeMillis() - startWrite21) / 1000F));
+            // Escribir archivo U21
+            Profiler.profileTiming("write U21 file", () -> {
+                FileUtils.escribirU21(testFileName, codigo.get(), arbol.get().getListaSimbolos());
+            });
 
-            // Deserialize
-            long startReading21 = System.currentTimeMillis();
-            ArchivoU21 archivo = FileUtils.leerU21(testFileName);
-            System.out.println(String.format("Time (s) to read U21: %s", (System.currentTimeMillis() - startReading21) / 1000F));
+            // Leer archivo U21
+            AtomicReference<ArchivoU21> archivo = new AtomicReference<>();
+            Profiler.profileTiming("read U21 file", () -> {
+                archivo.set(FileUtils.leerU21(testFileName));
+            });
 
-            assertEquals(arbol.getListaSimbolos().getSize(), archivo.getTablaSimbolos().getSize());
+            assertEquals(arbol.get().getListaSimbolos().getSize(), archivo.get().getTablaSimbolos().getSize());
+            assertEquals(codigo.get(), archivo.get().getCodigo());
 
-            // Compare codes
-            assertEquals(codigo, archivo.getCodigo());
+            // Decodificar y obtener mensaje original
+            AtomicReference<String> mensajeOriginal = new AtomicReference<>();
+            Profiler.profileTiming("decode message", () -> {
+                mensajeOriginal.set(CodificadorHuffman.decodificar(archivo.get()));
+            });
 
-            long startDecoding = System.currentTimeMillis();
-            String mensajeOriginal = CodificadorHuffman.decodificar(archivo);
-            System.out.println(String.format("Time (s) to decode message: %s", (System.currentTimeMillis() - startDecoding) / 1000F));
-
-            assertEquals(input, mensajeOriginal);
+            assertEquals(input[0], mensajeOriginal.get());
 
             // Fix line breaks
-            FileUtils.escribir(OUTPUT_DIR + count[0] + "-testMessage.txt", mensajeOriginal);
+            FileUtils.escribir(OUTPUT_DIR + count[0] + "-testMessage.txt", mensajeOriginal.get());
 
             String mensajeGuardado = FileUtils.leer(OUTPUT_DIR + count[0] + "-testMessage.txt");
             // Messages should be equal
-            assertEquals(input, mensajeGuardado);
+            assertEquals(input[0], mensajeGuardado);
 
             count[0] ++;
         });
