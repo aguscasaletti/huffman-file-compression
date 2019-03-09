@@ -1,7 +1,7 @@
 package org.ues21.aed2.soporte;
 
-import org.ues21.aed2.estructuras.map.ItemTablaSimbolos;
-import org.ues21.aed2.estructuras.map.TablaHashSimbolos;
+import org.ues21.aed2.estructuras.tablaHash.ItemTablaSimbolos;
+import org.ues21.aed2.estructuras.tablaHash.TablaHashSimbolos;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -73,7 +73,6 @@ public class FileUtils {
         return codeBytes;
     }
 
-//    public static void escribirU21(String path, String contenido, CharMap tablaSimbolos) {
     public static void escribirU21(String path, String contenido, TablaHashSimbolos tablaSimbolos) {
         if (path == null || path.isEmpty()) {
             path = "comprimido.u21";

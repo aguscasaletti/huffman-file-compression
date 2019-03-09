@@ -1,20 +1,18 @@
-package org.ues21.aed2.estructuras.map;
+package org.ues21.aed2.estructuras.tablaHash;
 
-import org.ues21.aed2.estructuras.lista.Lista;
+import org.ues21.aed2.estructuras.lista.ListaEnlazada;
 import org.ues21.aed2.estructuras.lista.Nodo;
 
 import java.util.Iterator;
-import java.util.Spliterator;
-import java.util.function.Consumer;
 
 public class TablaHashSimbolos implements Iterable<ItemTablaSimbolos> {
 
     private int m = 500; // Tamaño del mapa
     private int size = 0; // Cantidad de elementos en el mapa (nodos)
-    private Lista[] map;
+    private ListaEnlazada[] map;
 
     public TablaHashSimbolos() {
-        this.map = new Lista[this.m];
+        this.map = new ListaEnlazada[this.m];
     }
 
     public void insertar(String key, ItemTablaSimbolos value) {
@@ -22,7 +20,7 @@ public class TablaHashSimbolos implements Iterable<ItemTablaSimbolos> {
         Nodo<ItemTablaSimbolos> nodo = new Nodo<>(value, null);
 
         if (this.map[hash] == null) {
-            Lista l = new Lista(nodo);
+            ListaEnlazada l = new ListaEnlazada(nodo);
             this.map[hash] = l;
         } else {
             this.map[hash].insertarUltimo(nodo);
@@ -78,7 +76,7 @@ public class TablaHashSimbolos implements Iterable<ItemTablaSimbolos> {
         return size;
     }
 
-    public Lista[] getMap() {
+    public ListaEnlazada[] getMap() {
         return map;
     }
 

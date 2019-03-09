@@ -1,9 +1,8 @@
 package org.ues21.aed2.estructuras.huffman;
 
-import org.ues21.aed2.estructuras.lista.ListaHuffman;
 import org.ues21.aed2.estructuras.lista.Nodo;
-import org.ues21.aed2.estructuras.map.ItemTablaSimbolos;
-import org.ues21.aed2.estructuras.map.TablaHashSimbolos;
+import org.ues21.aed2.estructuras.tablaHash.ItemTablaSimbolos;
+import org.ues21.aed2.estructuras.tablaHash.TablaHashSimbolos;
 import org.ues21.aed2.vista.ProgressListener;
 
 /**

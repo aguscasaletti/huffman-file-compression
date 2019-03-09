@@ -24,16 +24,8 @@ public class Nodo<T> {
         return info;
     }
 
-    public void setInfo(T info) {
-        this.info = info;
-    }
-
     public Nodo getSiguiente() {
         return siguiente;
-    }
-
-    public boolean hasNext() {
-        return siguiente != null;
     }
 
     public void setSiguiente(Nodo siguiente) {

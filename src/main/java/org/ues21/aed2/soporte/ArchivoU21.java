@@ -1,6 +1,6 @@
 package org.ues21.aed2.soporte;
 
-import org.ues21.aed2.estructuras.map.TablaHashSimbolos;
+import org.ues21.aed2.estructuras.tablaHash.TablaHashSimbolos;
 
 public class ArchivoU21 {
     private String nombre;

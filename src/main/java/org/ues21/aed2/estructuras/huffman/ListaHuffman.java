@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.ues21.aed2.estructuras.lista;
+package org.ues21.aed2.estructuras.huffman;
 
 import org.ues21.aed2.estructuras.huffman.NodoHuffman;
+import org.ues21.aed2.estructuras.lista.Nodo;
 
 /**
  *
@@ -16,12 +17,6 @@ public class ListaHuffman {
     private Nodo frente = null;
     private int size = 0;
 
-    /**
-     * Método que permite agregar nodos al final de la lista sin repetidos
-     *
-     * @param <T>
-     * @param info El valor del nodo a ser insertado
-     */
     public <T> void agregarOrdenado(final T info) {
         Nodo actual = this.getFrente();
         Nodo anterior = null;

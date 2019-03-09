@@ -1,4 +1,4 @@
-package org.ues21.aed2.estructuras.map;
+package org.ues21.aed2.estructuras.tablaHash;
 
 public class ItemTablaSimbolos implements Comparable<ItemTablaSimbolos>{
     private char simbolo;

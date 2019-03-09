@@ -1,16 +1,12 @@
 package org.ues21.aed2.estructuras.lista;
 
-public class Lista {
+public class ListaEnlazada {
 
     private Nodo frente;
     private int size;
 
-    public Lista(Nodo frente) {
+    public ListaEnlazada(Nodo frente) {
         this.frente = frente;
-    }
-
-    public Lista() {
-
     }
 
     public void insertarUltimo(Nodo nodo) {
@@ -34,5 +30,9 @@ public class Lista {
 
     public void setFrente(Nodo frente) {
         this.frente = frente;
+    }
+
+    public int getSize() {
+        return size;
     }
 }

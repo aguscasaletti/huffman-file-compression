@@ -20,19 +20,18 @@ import static org.junit.Assert.*;
 public class HuffmanTests {
 
     public static String TEST_DIR = "src/test";
-    public static String INPUT_DIR = TEST_DIR + "/input/";
     public static String OUTPUT_DIR = TEST_DIR + "/generated/";
 
     private String[] inputTestSet = {
-//            "Se debe proporcionar al menos un modo y un archivo de origen \n",
-//            "Hola como estás!!! :D !\n",
-//            "LSDKFLAKDFL DFGldskfgs dflgklds gKLDFKHLDFGk KHLDKGHOrk$%·L$K %$&\n",
-//            "!=!=!=!=!!!===DSdfsoe·/$%&/%&/(%&/(!=!=!=!=!!!===DSdfsoe· ÷¬¢#@|≠´‚¢∞@##¢¢#∞ %&$%%&&&&&/%&///%?????\n",
-//            "When packing signed bytes into an int, each byte needs to be masked off because it is sign-extended to 32 bits (rather than zero-extended) due to the arithmetic promotion rule (described in JLS, Conversions and Promotions). There's an interesting puzzle related to this described in Java Puzzlers (\"A Big Delight in Every Byte\") by Joshua Bloch and Neal Gafter . When comparing a byte value to an int value, the byte is sign-extended to an int and then this value is compared to the other int\n",
-//            "PATH://src/test/input/prueba.txt",
+            "Se debe proporcionar al menos un modo y un archivo de origen \n",
+            "Hola como estás!!! :D !\n",
+            "LSDKFLAKDFL DFGldskfgs dflgklds gKLDFKHLDFGk KHLDKGHOrk$%·L$K %$&\n",
+            "!=!=!=!=!!!===DSdfsoe·/$%&/%&/(%&/(!=!=!=!=!!!===DSdfsoe· ÷¬¢#@|≠´‚¢∞@##¢¢#∞ %&$%%&&&&&/%&///%?????\n",
+            "When packing signed bytes into an int, each byte needs to be masked off because it is sign-extended to 32 bits (rather than zero-extended) due to the arithmetic promotion rule (described in JLS, Conversions and Promotions). There's an interesting puzzle related to this described in Java Puzzlers (\"A Big Delight in Every Byte\") by Joshua Bloch and Neal Gafter . When comparing a byte value to an int value, the byte is sign-extended to an int and then this value is compared to the other int\n",
+            "PATH://src/test/input/prueba.txt",
             "PATH://src/test/input/shakespeare.txt",
-//            "PATH://src/test/input/big.txt",
-//            "PATH://src/test/input/words.txt",
+            "PATH://src/test/input/big.txt",
+            "PATH://src/test/input/words.txt",
 //            "PATH://src/test/input/chino.txt",
 //            "PATH://src/test/input/big2.txt"
     };
@@ -122,19 +121,7 @@ public class HuffmanTests {
             ArchivoU21 archivo = FileUtils.leerU21(testFileName);
             System.out.println(String.format("Time (s) to read U21: %s", (System.currentTimeMillis() - startReading21) / 1000F));
 
-//            // Compare dictionaries
-//            Nodo frente = arbol.getListaSimbolos().getFrente();
-//            Nodo deserialized = archivo.getTablaSimbolos().getFrente();
-
             assertEquals(arbol.getListaSimbolos().getSize(), archivo.getTablaSimbolos().getSize());
-
-//            while (frente != null) {
-//                assertEquals(((String[])frente.getInfo())[0], ((String[])deserialized.getInfo())[0]);
-//                assertEquals(((String[])frente.getInfo())[1], ((String[])deserialized.getInfo())[1]);
-//
-//                deserialized = deserialized.getSiguiente();
-//                frente = frente.getSiguiente();
-//            }
 
             // Compare codes
             assertEquals(codigo, archivo.getCodigo());

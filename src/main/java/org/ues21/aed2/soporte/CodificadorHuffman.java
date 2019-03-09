@@ -1,12 +1,11 @@
 package org.ues21.aed2.soporte;
 
-import org.ues21.aed2.estructuras.map.ItemTablaSimbolos;
-import org.ues21.aed2.estructuras.map.TablaHashSimbolos;
+import org.ues21.aed2.estructuras.tablaHash.ItemTablaSimbolos;
+import org.ues21.aed2.estructuras.tablaHash.TablaHashSimbolos;
 import org.ues21.aed2.vista.ProgressListener;
 
 public class CodificadorHuffman {
 
-//    public static String codificar(final CharMap tablaSimbolos, final String mensaje) {
     public static String codificar(final TablaHashSimbolos tablaSimbolos, final String mensaje) {
         char[] vectTexto = mensaje.toCharArray();
         char c;
