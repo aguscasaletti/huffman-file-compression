@@ -11,6 +11,7 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
@@ -137,8 +138,8 @@ public class View extends JFrame implements PropertyChangeListener {
 
                 if (this.compress) {
                     this.startIndeterminate();
-                    String codigo = CodificadorHuffman.codificar(huffman.getListaSimbolos(), huffman.getTexto());
-                    FileUtils.escribirU21(file.getAbsolutePath() + "/testAgus.u21", codigo, huffman.getListaSimbolos());
+                    String codigo = CodificadorHuffman.codificar(huffman.getTablaSimbolos(), huffman.getTexto());
+//                    FileUtils.escribirU21(file.getAbsolutePath() + "/testAgus.u21", codigo, huffman.getTablaSimbolos());
                     this.stopIndeterminate();
                 } else {
                     this.startIndeterminate();
@@ -273,7 +274,12 @@ public class View extends JFrame implements PropertyChangeListener {
 
         @Override
         protected Huffman doInBackground() {
-            String content = FileUtils.leer(this.filePath);
+            String content = null;
+            try {
+                content = FileUtils.leer(this.filePath);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
             Huffman arbol = new Huffman(content, new ProgressListener() {
                 @Override
                 public void onProgressUpdate(long progress) {

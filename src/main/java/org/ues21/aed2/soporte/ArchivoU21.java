@@ -7,24 +7,28 @@ import org.ues21.aed2.estructuras.tablaHash.TablaHashSimbolos;
  * Se utiliza al leer el archivo comprimido, para construír un objeto manejable por el programa.
  */
 public class ArchivoU21 {
+    private int largoNombre;
     private String nombre;
-    private String extension;
     private String codigo;
     private TablaHashSimbolos map;
 
-    public ArchivoU21(String nombre, String extension, String codigo, TablaHashSimbolos map) {
+    public ArchivoU21(int largoNombre, String nombre, String codigo, TablaHashSimbolos map) {
+        this.largoNombre = largoNombre;
         this.nombre = nombre;
-        this.extension = extension;
         this.codigo = codigo;
         this.map = map;
     }
 
-    public String getNombre() {
-        return nombre;
+    public int getLargoNombre() {
+        return largoNombre;
     }
 
-    public String getExtension() {
-        return extension;
+    public void setLargoNombre(int largoNombre) {
+        this.largoNombre = largoNombre;
+    }
+
+    public String getNombre() {
+        return nombre;
     }
 
     public String getCodigo() {
@@ -37,10 +41,6 @@ public class ArchivoU21 {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
-    }
-
-    public void setExtension(String extension) {
-        this.extension = extension;
     }
 
     public void setCodigo(String codigo) {

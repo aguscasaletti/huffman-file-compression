@@ -1,7 +1,7 @@
 <component name="ArtifactManager">
-  <artifact type="jar" name="TAED2-FinalProject:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/TAED2_FinalProject_jar</output-path>
-    <root id="archive" name="TAED2-FinalProject.jar">
+  <artifact type="jar" name="hu21:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/hu21_jar</output-path>
+    <root id="archive" name="hu21.jar">
       <element id="directory" name="META-INF">
         <element id="file-copy" path="$PROJECT_DIR$/src/main/resources/META-INF/MANIFEST.MF" />
       </element>

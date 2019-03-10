@@ -9,6 +9,7 @@ import org.ues21.aed2.soporte.CodificadorHuffman;
 import org.ues21.aed2.soporte.FileUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,11 +52,11 @@ public class HuffmanTests {
                 inputCharsMap.put(String.valueOf(symbol), true);
             }
 
-            assertEquals(huffman.getListaSimbolos().getSize(), inputCharsMap.size());
+            assertEquals(huffman.getTablaSimbolos().getSize(), inputCharsMap.size());
 
             for (Map.Entry<String, Boolean> entry : inputCharsMap.entrySet())
             {
-                assertNotNull(huffman.getListaSimbolos().findSimbolo(entry.getKey()));
+                assertNotNull(huffman.getTablaSimbolos().findSimbolo(entry.getKey()));
                 assertNotEquals(entry.getValue(), null);
                 assertNotEquals(entry.getValue(), "");
                 assertNotEquals(entry.getKey(), null);
@@ -69,7 +70,7 @@ public class HuffmanTests {
         Stream.of(inputTestSet).forEach(input -> {
 
             Huffman huffman = new Huffman(input);
-            String result = CodificadorHuffman.codificar(huffman.getListaSimbolos(), input);
+            String result = CodificadorHuffman.codificar(huffman.getTablaSimbolos(), input);
             assertTrue(
                     result.replace("0", "")
                             .replace("1", "")
@@ -94,64 +95,73 @@ public class HuffmanTests {
             Arrays.stream(testDirFiles).forEach(File::delete);
         }
 
-        final int[] count = { 0 };
+        final int[] count = {0};
         Stream.of(inputTestSet).forEach(value -> {
-            System.out.println(" ------  Profiling: -----" + value.substring(value.length() - 10, value.length()));
+            try {
+                System.out.println(" ------  Profiling: -----" + value.substring(value.length() - 10, value.length()));
 
-            String testFileName = OUTPUT_DIR + "/" + count[0] + "file.u21";
-            String[] input = { value };
+                String testFileName = OUTPUT_DIR + count[0] + "file.u21";
+                String[] input = {value};
 
-            if (input[0].startsWith("PATH://")) {
-                // Leer archivo original como String
-                Profiler.profileTiming("read file", () -> {
-                    input[0] = FileUtils.leer(input[0].replace("PATH://", ""));
+                if (input[0].startsWith("PATH://")) {
+                    // Leer archivo original como String
+                    Profiler.profileTiming("read file", () -> {
+                        try {
+                            input[0] = FileUtils.leer(input[0].replace("PATH://", ""));
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                    });
+                }
+
+                // Crear árbol de Huffman y tabla de símbolos
+                AtomicReference<Huffman> arbol = new AtomicReference<>();
+                Profiler.profileTiming("create tree and symbols table", () -> {
+                    arbol.set(new Huffman(input[0]));
                 });
+
+                // Codificar (obtener string final)
+                AtomicReference<String> codigo = new AtomicReference<>();
+                Profiler.profileTiming("encode", () -> {
+                    codigo.set(CodificadorHuffman.codificar(arbol.get().getTablaSimbolos(), input[0]));
+                });
+
+                System.out.println("Cantidad de símbolos diferentes: " + arbol.get().getTablaSimbolos().getSize());
+
+                // Escribir archivo U21
+                Profiler.profileTiming("write U21 file", () -> {
+                    FileUtils.escribirU21(testFileName, codigo.get(), arbol.get().getTablaSimbolos(), count[0] + "file.txt");
+                });
+
+                // Leer archivo U21
+                AtomicReference<ArchivoU21> archivo = new AtomicReference<>();
+                Profiler.profileTiming("read U21 file", () -> {
+                    archivo.set(FileUtils.leerU21(testFileName));
+                });
+
+                assertEquals(arbol.get().getTablaSimbolos().getSize(), archivo.get().getTablaSimbolos().getSize());
+                assertEquals(codigo.get(), archivo.get().getCodigo());
+
+                // Decodificar y obtener mensaje original
+                AtomicReference<String> mensajeOriginal = new AtomicReference<>();
+                Profiler.profileTiming("decode message", () -> {
+                    mensajeOriginal.set(CodificadorHuffman.decodificar(archivo.get()));
+                });
+
+                assertEquals(input[0], mensajeOriginal.get());
+
+                // Fix line breaks
+                FileUtils.escribir(OUTPUT_DIR + count[0] + "-testMessage.txt", mensajeOriginal.get());
+
+                String mensajeGuardado = FileUtils.leer(OUTPUT_DIR + count[0] + "-testMessage.txt");
+                // Messages should be equal
+                assertEquals(input[0], mensajeGuardado);
+
+                count[0]++;
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
-
-            // Crear árbol de Huffman y tabla de símbolos
-            AtomicReference<Huffman> arbol = new AtomicReference<>();
-            Profiler.profileTiming("create tree and symbols table", () -> {
-                arbol.set(new Huffman(input[0]));
-            });
-
-            // Codificar (obtener string final)
-            AtomicReference<String> codigo = new AtomicReference<>();
-            Profiler.profileTiming("encode", () -> {
-                codigo.set(CodificadorHuffman.codificar(arbol.get().getListaSimbolos(), input[0]));
-            });
-
-            System.out.println("Cantidad de símbolos diferentes: " + arbol.get().getListaSimbolos().getSize());
-
-            // Escribir archivo U21
-            Profiler.profileTiming("write U21 file", () -> {
-                FileUtils.escribirU21(testFileName, codigo.get(), arbol.get().getListaSimbolos());
-            });
-
-            // Leer archivo U21
-            AtomicReference<ArchivoU21> archivo = new AtomicReference<>();
-            Profiler.profileTiming("read U21 file", () -> {
-                archivo.set(FileUtils.leerU21(testFileName));
-            });
-
-            assertEquals(arbol.get().getListaSimbolos().getSize(), archivo.get().getTablaSimbolos().getSize());
-            assertEquals(codigo.get(), archivo.get().getCodigo());
-
-            // Decodificar y obtener mensaje original
-            AtomicReference<String> mensajeOriginal = new AtomicReference<>();
-            Profiler.profileTiming("decode message", () -> {
-                mensajeOriginal.set(CodificadorHuffman.decodificar(archivo.get()));
-            });
-
-            assertEquals(input[0], mensajeOriginal.get());
-
-            // Fix line breaks
-            FileUtils.escribir(OUTPUT_DIR + count[0] + "-testMessage.txt", mensajeOriginal.get());
-
-            String mensajeGuardado = FileUtils.leer(OUTPUT_DIR + count[0] + "-testMessage.txt");
-            // Messages should be equal
-            assertEquals(input[0], mensajeGuardado);
-
-            count[0] ++;
         });
     }
 }

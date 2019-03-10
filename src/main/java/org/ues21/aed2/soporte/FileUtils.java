@@ -21,19 +21,15 @@ public class FileUtils {
      * @param path path donde se encuenta el archivo a leer
      * @return el contenido en String del archivo leído
      */
-    public static String leer(String path) {
+    public static String leer(String path) throws FileNotFoundException {
         StringBuilder sb = new StringBuilder();
 
-        try {
-            File file = new File(path);
-            Scanner sc = new Scanner(file);
+        File file = new File(path);
+        Scanner sc = new Scanner(file);
 
-            while (sc.hasNextLine()) {
-                String nextLine = sc.nextLine();
-                sb.append(nextLine + "\n");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        while (sc.hasNextLine()) {
+            String nextLine = sc.nextLine();
+            sb.append(nextLine + "\n");
         }
 
         return sb.toString();
@@ -109,8 +105,9 @@ public class FileUtils {
      * @param path el path donde se desea escribir el archivo
      * @param codigo el contenido (mensaje codificado) del mismo
      * @param tablaSimbolos la tabla de símbolos que lo define
+     * @param nombreOriginal el nombre original del archivo
      */
-    public static void escribirU21(String path, String codigo, TablaHashSimbolos tablaSimbolos) {
+    public static void escribirU21(String path, String codigo, TablaHashSimbolos tablaSimbolos, String nombreOriginal) {
         if (path == null || path.isEmpty()) {
             path = "comprimido.u21";
         }
@@ -128,23 +125,16 @@ public class FileUtils {
             rda.writeChar('f');
 
             /**
-             * Escribimos la extensión del archivo
+             * Escribimos el largo del nombre del archivo
              */
-            rda.writeChar('t');
-            rda.writeChar('x');
-            rda.writeChar('t');
+            rda.writeInt(nombreOriginal.length());
 
             /**
              * Escribimos el nombre del archivo
              */
-            rda.writeChar('P');
-            rda.writeChar('R');
-            rda.writeChar('U');
-            rda.writeChar('E');
-            rda.writeChar('B');
-            rda.writeChar('C');
-            rda.writeChar('O');
-            rda.writeChar('M');
+            for (int i = 0; i < nombreOriginal.length(); i++) {
+                rda.writeChar(nombreOriginal.charAt(i));
+            }
 
             /**
              * Escribir código
@@ -192,6 +182,7 @@ public class FileUtils {
 
         TablaHashSimbolos tablaHash = new TablaHashSimbolos();
         String codigo = "";
+        int largoNombre = 0;
 
         try {
             RandomAccessFile rda = new RandomAccessFile(path, "r");
@@ -202,17 +193,19 @@ public class FileUtils {
                 sbPrefijo.append(rda.readChar());
             }
 
-            /**
-             * Leemos la extensión del archivo
-             */
-            for (int i = 3; i < 6; i++) {
-                sbExt.append(rda.readChar());
+            if (!sbPrefijo.toString().equals("huf")) {
+                throw new Excepciones.ArchivoInvalidoException();
             }
+
+            /**
+             * Leemos el largo del nombre (+extensión)
+             */
+            largoNombre = rda.readInt();
 
             /**
              * Leemos el nombre del archivo
              */
-            for (int i = 6; i < 14; i++) {
+            for (int i = 0; i < largoNombre; i++) {
                 sbNombre.append(rda.readChar());
             }
 
@@ -273,8 +266,8 @@ public class FileUtils {
         }
 
         return new ArchivoU21(
+                largoNombre,
                 sbNombre.toString(),
-                sbExt.toString(),
                 codigo,
                 tablaHash
         );

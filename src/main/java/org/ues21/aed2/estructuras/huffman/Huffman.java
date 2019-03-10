@@ -16,7 +16,7 @@ public class Huffman {
 
     private ListaHuffman listaArbolHuffman = new ListaHuffman();
 
-    private TablaHashSimbolos listaSimbolos = new TablaHashSimbolos();
+    private TablaHashSimbolos tablaSimbolos = new TablaHashSimbolos();
 
     private ProgressListener progressListener;
 
@@ -90,7 +90,7 @@ public class Huffman {
         // Cuando el árbol fue creado, crear ahora la tabla de símbolos
         if (this.listaArbolHuffman.getFrente() != null) {
             NodoHuffman p = (NodoHuffman) this.listaArbolHuffman.getFrente().getInfo();
-            crearTablaSimbolos(p, this.listaSimbolos, "");
+            crearTablaSimbolos(p, this.tablaSimbolos, "");
         }
 
         // Notificar finalización del progreso
@@ -112,7 +112,7 @@ public class Huffman {
         }
     }
 
-    public TablaHashSimbolos getListaSimbolos() {
-        return listaSimbolos;
+    public TablaHashSimbolos getTablaSimbolos() {
+        return tablaSimbolos;
     }
 }
