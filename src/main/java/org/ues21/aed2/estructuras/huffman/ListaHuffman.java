@@ -18,14 +18,18 @@ public class ListaHuffman {
      * Función que agrega un caracter a la lista de manera ordenada. Si se encuentra, se incrementa la frecuencia del mismo.
      *
      * Fixes:
+     *
      * - Cuando se encontraba el caracter dentro de la lista y se incrementaba su frecuencia,
      *  no se acomodaba el nodo de manera tal que quedara ordenada la lista. Como consecuencia de esto,
      *  el árbol generado no era correcto. Ahora, cuando eso sucede, movemos el nodo hacia adelante hasta ubicarlo
      *  en su lugar correspondiente.
      *
+     * - Al utilizar esta clase solo para la construcción del Arbol de Huffman no es necesario parametrizarla con Generics
+     *   y hacer tanto downcasting en este método.
+     *
      */
-    public <T> void agregarOrdenado(final T info) {
-        Nodo actual = this.getFrente();
+    public void agregarOrdenado(final NodoHuffman info) {
+        Nodo<NodoHuffman> actual = this.getFrente();
         Nodo anterior = null;
         boolean found = false;
         Nodo nuevo = new Nodo(info, null);
@@ -39,13 +43,13 @@ public class ListaHuffman {
         Nodo insert = null;
 
         while (actual != null) {
-            if (((NodoHuffman) info).getCaracter() != null &&
-                    ((NodoHuffman) info).getCaracter().equals(((NodoHuffman) actual.getInfo()).getCaracter())) {
+            if (info.getCaracter() != null &&
+                    (info.getCaracter().equals(actual.getInfo().getCaracter()))) {
                 found = true;
-                ((NodoHuffman) actual.getInfo()).setFrec(((NodoHuffman) actual.getInfo()).getFrec() + 1);
+                actual.getInfo().setFrec(actual.getInfo().getFrec() + 1);
                 while (actual.getSiguiente() != null &&
-                        ((NodoHuffman) actual.getInfo()).getFrec()
-                                > ((NodoHuffman)actual.getSiguiente().getInfo()).getFrec()) {
+                        actual.getInfo().getFrec()
+                                > (actual.getSiguiente().getInfo()).getFrec()) {
                     Nodo aux = actual.getSiguiente();
                     if (anterior != null) {
                         anterior.setSiguiente(aux);
@@ -60,7 +64,7 @@ public class ListaHuffman {
                 break;
             }
 
-            if (((NodoHuffman) actual.getInfo()).getFrec() < ((NodoHuffman) info).getFrec()) {
+            if (actual.getInfo().getFrec() < info.getFrec()) {
                 insert = actual;
             }
 
@@ -84,12 +88,12 @@ public class ListaHuffman {
 
     }
 
-    public <T>T get(int pos) {
+    public Nodo get(int pos) {
         Nodo p = this.getFrente();
         int i = 1;
         while (p != null) {
             if (i == pos) {
-                return (T) p;
+                return p;
             }
             p = p.getSiguiente();
             i++;
@@ -98,10 +102,10 @@ public class ListaHuffman {
     }
 
 
-    public <T>T borrarPrimero() {
+    public NodoHuffman borrarPrimero() {
         if (this.getFrente() != null) {
-            Nodo p = this.getFrente();
-            T y =  (T) p.getInfo();
+            Nodo<NodoHuffman> p = this.getFrente();
+            NodoHuffman y =  p.getInfo();
             this.setFrente(this.getFrente().getSiguiente());
             p.setSiguiente(null);
 
@@ -130,7 +134,7 @@ public class ListaHuffman {
     /**
      * @return the frente
      */
-    public Nodo getFrente() {
+    public Nodo<NodoHuffman> getFrente() {
         return frente;
     }
 

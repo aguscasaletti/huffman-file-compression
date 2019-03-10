@@ -20,7 +20,7 @@ public class Nodo<T> {
         return info;
     }
 
-    public Nodo getSiguiente() {
+    public Nodo<T> getSiguiente() {
         return siguiente;
     }
 
