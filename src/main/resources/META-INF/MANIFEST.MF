@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Main-Class: org.ues21.main.Main
+
