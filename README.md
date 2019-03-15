@@ -24,4 +24,4 @@ i.e. if the symbols table is "'a' --> '001'  ;  'b' --> '1011'", then the serial
 
 
 **Note:** This implementation is far from perfect or optimized, and it can't compress binary files, only plain text files.
-It can however compress large text based files +6MB in a reasonable time at a 0.6 compression rate.
+It can however compress large text based files +6MB in a reasonable time at a 0.6≈ compression rate.
